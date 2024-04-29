@@ -1,0 +1,21 @@
+{
+  "name": "pb138-project-backend",
+  "version": "1.0.0",
+  "description": "backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "lint": "eslint .",
+    "db:seed": "tsx seed/seed.ts",
+    "migrate:reset": "prisma migrate reset",
+    "migrate:up": "prisma migrate dev"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "prisma": "^5.13.0",
+    "tsx": "^4.7.3",
+    "typescript": "^5.4.5"
+  }
+}
