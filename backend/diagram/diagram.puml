@@ -1,0 +1,83 @@
+@startuml
+
+skinparam linetype ortho
+
+entity User {
+  * id: Int
+  --
+  * email: String
+  * displayName: String
+  * passwordHash: String
+  * createdOn: DateTime
+}
+
+
+entity Customer {
+  * id: Int
+  --
+  * name: String
+  * surname: String
+  * email: String
+  * phoneNumber: String
+}
+
+entity Product {
+  * id: Int
+  --
+  * description: String
+  * price: Number
+  * type: String
+}
+
+entity Category {
+    * id: Int
+    --
+    * name: String
+}
+
+entity Offer {
+  * id: Int
+  --
+  * name: String
+  * description: String
+}
+
+entity OfferToProduct {
+  * id: Int
+  --
+  * offerId: Int
+  * productId: Int
+  * productQuantity: Number
+  * newPrice: Number
+}
+
+entity ChatCommunication {
+  * id: Int
+  --
+  * userId: Int
+  * customerId: Int
+  * message: String
+  * timestamp: DateTime
+  * isUserSent: boolean
+}
+
+entity VoiceCommunication {
+  * id: Int
+  --
+  * filePath: String
+  * start: DateTime
+  * end: DateTime
+  * userId: Int
+  * customerId: Int
+}
+
+Product }o..o{ Category
+Offer ||..o{ OfferToProduct
+Product ||..o{ OfferToProduct
+Customer }o..o{ Product
+User ||..o{ VoiceCommunication
+User ||..o{ ChatCommunication
+VoiceCommunication ||..o{ Customer
+ChatCommunication ||..o{ Customer
+
+@enduml
