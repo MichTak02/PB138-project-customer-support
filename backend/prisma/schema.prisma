@@ -93,6 +93,7 @@ model VoiceCommunication {
   filePath                String
   start                   DateTime
   end                     DateTime
+  isUserStarted           Boolean
   user                    User                    @relation(fields: [userId], references: [id])
   userId                  Int
   customer                Customer                @relation(fields: [customerId], references: [id])
