@@ -8,10 +8,11 @@ export type CustomerDto = BaseModelId & {
     phoneNumber: string
 }
 
-export type CustomerCreateDto = Omit<CustomerDto, "id">;
+export type CustomerCreateDto = Omit<CustomerDto, "id"> & { productIds: number[] };
 export type CustomerUpdateDto = Partial<CustomerCreateDto>
 export type CustomerExtendedDto = CustomerDto & {
     products:            ProductDto[]
     chatCommunications:  ChatCommunicationDto[]
     voiceCommunications: VoiceCommunicationDto[]
 }
+export type CustomerFilters = Partial<CustomerCreateDto>
