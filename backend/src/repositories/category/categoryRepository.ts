@@ -85,6 +85,7 @@ const categoryRepository = {
                     if (category.products.length != 0) {
                         throw new Error("Cannot delete category as it is used by some products");
                     }
+                    transaction.category.delete(id);
                     return;
                 }   
             )
