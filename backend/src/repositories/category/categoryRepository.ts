@@ -30,15 +30,6 @@ const categoryRepository = {
         }
     },
 
-    async getPages(): DbResult<number> {
-        try {
-            const pages = (await prisma.category.findMany()).length / CATEGORIES_PER_PAGE;
-            return Result.ok(Math.ceil(pages));
-        } catch (error) {
-            return handleRepositoryErrors(error);
-        }
-    },
-
     async readMany(cursorId: number | undefined, filter: CategoryFilters): DbResult<CategoryDto[]> {
         try {
             if (!cursorId) {
