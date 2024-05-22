@@ -18,3 +18,5 @@ export type UserExtendedDto = UserDto & {
     chatCommunications:    ChatCommunicationDto[]
     voiceCommunications:   VoiceCommunicationDto[]
 }
+
+export type UserFilters = Partial<Omit<UserCreateDto, "createdOn" | "passwordHash">>
