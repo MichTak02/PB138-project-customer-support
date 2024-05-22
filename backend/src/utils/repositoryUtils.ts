@@ -2,6 +2,8 @@ import {Result} from "@badrap/result";
 import { Prisma } from "@prisma/client";
 import {ConflictError, InternalError, NotFoundError} from "../repositories/errors";
 
+export const READ_MANY_TAKE = 20
+
 export const handleRepositoryErrors = (e: unknown) => {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
         if (e.code === 'P2002') {
