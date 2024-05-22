@@ -1,5 +1,9 @@
 import {ChatCommunication, User, VoiceCommunication} from "@prisma/client";
 import {UserDto, UserExtendedDto} from "./types"
+import {
+    chatCommunicationModelToChatCommunicationDto,
+    voiceCommunicationModelToVoiceCommunicationDto
+} from "../communication/mappers";
 
 export const userModelToUserDto = (userModel: User): UserDto => ({
     id: userModel.id,
