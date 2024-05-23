@@ -4,6 +4,8 @@ import {
     chatCommunicationModelToChatCommunicationDto,
     voiceCommunicationModelToVoiceCommunicationDto
 } from "../communication/mappers";
+import {productModelToProductDto} from "../product/mappers";
+import {ProductWithCategories} from "../product/types";
 
 export const customerModelToCustomerDto = (customerModel: Customer): CustomerDto => ({
     id: customerModel.id,
@@ -14,7 +16,7 @@ export const customerModelToCustomerDto = (customerModel: Customer): CustomerDto
 })
 
 export const customerModelToCustomerExtendedDto = (customerModel: Customer & {
-    products: Product[],
+    products: ProductWithCategories[],
     chatCommunications: ChatCommunication[],
     voiceCommunications: VoiceCommunication[]
 }): CustomerExtendedDto => ({

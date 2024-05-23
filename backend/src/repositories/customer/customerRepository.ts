@@ -85,6 +85,11 @@ export const customerRepository = {
                 include: {
                     chatCommunications: true,
                     voiceCommunications: true,
+                    products: {
+                        include: {
+                            categories: true,
+                        }
+                    }
                 }
             });
             return Result.ok(customerModelToCustomerExtendedDto(customer));
@@ -123,6 +128,11 @@ export const customerRepository = {
             const includeObj = {
                 chatCommunications: true,
                 voiceCommunications: true,
+                products: {
+                    include: {
+                        categories: true,
+                    }
+                }
             }
 
             if (!cursorId) {
