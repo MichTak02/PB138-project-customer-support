@@ -24,6 +24,7 @@ entity Customer {
 entity Product {
   * id: Int
   --
+  * name: String
   * description: String
   * price: Number
   * type: String

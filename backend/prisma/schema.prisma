@@ -46,13 +46,14 @@ enum Type {
 }
 
 model Product {
-  id              Int              @id @default(autoincrement())
-  description     String
-  price           Int
-  type            Type
-  categories      Category[]
-  offerToProducts OfferToProduct[]
-  customers       Customer[]
+  id                      Int                     @id @default(autoincrement())
+  name                    String
+  description             String
+  price                   Int
+  type                    Type      
+  categories              Category[]
+  offerToProducts         OfferToProduct[]
+  customers               Customer[]
 }
 
 model Category {
@@ -69,13 +70,15 @@ model Offer {
 }
 
 model OfferToProduct {
-  id              Int     @id @default(autoincrement())
-  offer           Offer   @relation(fields: [offerId], references: [id])
-  offerId         Int
-  product         Product @relation(fields: [productId], references: [id])
-  productId       Int
-  productQuantity Int
-  newPrice        Int
+  id                      Int                     @id @default(autoincrement())
+  offer                   Offer                   @relation(fields: [offerId], references: [id])
+  offerId                 Int
+  product                 Product                 @relation(fields: [productId], references: [id])
+  productId               Int
+  productQuantity         Int
+  newPrice                Int
+
+  @@unique([offerId, productId])
 }
 
 model ChatCommunication {
