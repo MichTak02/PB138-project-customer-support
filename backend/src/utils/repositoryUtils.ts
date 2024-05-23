@@ -1,6 +1,6 @@
 import {Result} from "@badrap/result";
 import { Prisma } from "@prisma/client";
-import {ConflictError, InternalError, NotFoundError} from "../repositories/errors";
+import {ConflictError, InternalError, NotFoundError} from "../errors/errors";
 
 export const READ_MANY_TAKE = 20
 

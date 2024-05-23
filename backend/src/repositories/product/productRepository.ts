@@ -1,17 +1,23 @@
 import { Result } from "@badrap/result";
 import prisma from "../client";
 import { DbResult } from "../types";
-import { handleRepositoryErrors } from "../../utils/repositoryUtils";
+import {handleRepositoryErrors, READ_MANY_TAKE} from "../../utils/repositoryUtils";
 import { ProductCreateDto, ProductDto, ProductExtendedDto, ProductFilters, ProductUpdateDto } from "./types";
 import { productModelToProductDto, productModelToProductExtendedDto } from "./mappers";
-
-const PRODUCTS_PER_PAGE = 20;
 
 const productRepository = {
     async create(data: ProductCreateDto): DbResult<ProductDto> {
         try {
             const product = await prisma.product.create({
-                data: data,
+                data: {
+                    name: data.name,
+                    description: data.description,
+                    price: data.price,
+                    type: data.type,
+                    categories: {
+                        connect : data.categoryIds.map(id => ({ id }))
+                    }
+                },
                 include: {
                     categories: true,
                 }
@@ -42,7 +48,7 @@ const productRepository = {
         try {
             if (!cursorId) {
                 const products = await prisma.product.findMany({
-                    take: PRODUCTS_PER_PAGE,
+                    take: READ_MANY_TAKE,
                     orderBy: { id: 'asc'},
                     where: filter,
                     include: {
@@ -54,7 +60,7 @@ const productRepository = {
             const products = await prisma.product.findMany({
                 skip: 1,
                 cursor: { id: cursorId },
-                take: PRODUCTS_PER_PAGE,
+                take: READ_MANY_TAKE,
                 orderBy: { id: 'asc'},
                 where: filter,
                 include: {
@@ -91,11 +97,11 @@ const productRepository = {
         }
     },
 
-    async delete(id: number): DbResult<void> {
+    async delete(id: number): DbResult<ProductDto> {
         try {
             const transactionResult = await prisma.$transaction(
                 async (transaction) => {
-                    const product = transaction.product.findUniqueOrThrow({
+                    const product = await transaction.product.findUniqueOrThrow({
                         where: {
                             id,
                         },
@@ -106,13 +112,16 @@ const productRepository = {
                     if (product.offerToProducts.length != 0) {
                         throw new Error("Cannot delete product as it is used by some offers");
                     }
-                    transaction.product.delete({
+                    const deletedProduct = await transaction.product.delete({
                         where: { id },
+                        include: {
+                            categories: true
+                        }
                     });
-                    return;
+                    return deletedProduct;
                 }   
             )
-            return Result.ok(undefined);
+            return Result.ok(productModelToProductDto(transactionResult));
         } catch (error) {
             return handleRepositoryErrors(error);
         }
