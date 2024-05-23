@@ -5,6 +5,6 @@ export type CategoryDto = BaseModelId & {
 }
 
 export type CategoryCreateDto = Omit<CategoryDto, "id">;
-export type CategoryUpdateDto = Partial<CategoryDto>;
+export type CategoryUpdateDto = Partial<CategoryCreateDto>;
 
 export type CategoryFilters = Partial<CategoryDto>;
