@@ -1,6 +1,6 @@
 import { Offer, OfferToProduct } from "@prisma/client";
 import { OfferDto, OfferExtendedDto, OfferToProductDto, OfferToProductExtendedDto, OfferToProductWithProduct, OfferWithOfferToProductWithProducts, OfferWithOfferToProducts } from "./types";
-import { productModelToProductDto, productModelToProductExtendedDto } from "../product/mappers";
+import { productModelToProductExtendedDto } from "../product/mappers";
 
 export const offerToProductModelToOfferToProductDto = (model: OfferToProduct): OfferToProductDto => ({
     id: model.id,

@@ -21,6 +21,8 @@ export type OfferToProductDto = BaseModelId & {
     newPrice: number
 }
 
+export type OfferToProductCreateDto = Omit<OfferToProductDto, "id">
+
 export type OfferToProductExtendedDto = Omit<OfferToProductDto, "productId"> & {
     product: ProductExtendedDto,
 }
@@ -28,11 +30,13 @@ export type OfferToProductExtendedDto = Omit<OfferToProductDto, "productId"> & {
 export type OfferDto = BaseModelId & {
     name: string,
     description: string,
-    offerToProducts: OfferToProductDto[]
+    offerToProducts: OfferToProductCreateDto[]
 }
 
 export type OfferCreateDto = Omit<OfferDto, "id">;
-export type OfferUpdateDto = Partial<OfferDto>
+export type OfferUpdateDto = Partial<Omit<OfferDto, "offerToProducts"> & {
+    offerToProducts: OfferToProductDto[],
+}>
 
 export type OfferExtendedDto = Omit<OfferDto, "offerToProducts"> & {
     offerToProducts: OfferToProductExtendedDto[],
