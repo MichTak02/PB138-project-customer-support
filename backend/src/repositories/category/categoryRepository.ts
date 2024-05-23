@@ -3,9 +3,7 @@ import prisma from "../client";
 import { CategoryCreateDto, CategoryDto, CategoryFilters, CategoryUpdateDto } from "./types";
 import { categoryModelToCategoryDto } from "./mappers";
 import { DbResult } from "../types";
-import { handleRepositoryErrors } from "../../utils/repositoryUtils";
-
-const CATEGORIES_PER_PAGE = 20;
+import {handleRepositoryErrors, READ_MANY_TAKE} from "../../utils/repositoryUtils";
 
 const categoryRepository = {
     async create(data: CategoryCreateDto): DbResult<CategoryDto> {
@@ -34,7 +32,7 @@ const categoryRepository = {
         try {
             if (!cursorId) {
                 const categories = await prisma.category.findMany({
-                    take: CATEGORIES_PER_PAGE,
+                    take: READ_MANY_TAKE,
                     orderBy: { id: 'asc'},
                     where: filter,
                 });
@@ -43,7 +41,7 @@ const categoryRepository = {
             const categories = await prisma.category.findMany({
                 skip: 1,
                 cursor: { id: cursorId },
-                take: CATEGORIES_PER_PAGE,
+                take: READ_MANY_TAKE,
                 orderBy: { id: 'asc'},
                 where: filter,
             });
@@ -54,11 +52,11 @@ const categoryRepository = {
         }
     },
 
-    async update(data: CategoryUpdateDto): DbResult<CategoryDto> {
+    async update(id: number, data: CategoryUpdateDto): DbResult<CategoryDto> {
         try {
             const category = await prisma.category.update({
                 where: {
-                    id: data.id,
+                    id: id,
                 },
                 data: {
                     name: data.name,
@@ -70,11 +68,11 @@ const categoryRepository = {
         }
     },
 
-    async delete(id: number): DbResult<void> {
+    async delete(id: number): DbResult<CategoryDto> {
         try {
             const transactionResult = await prisma.$transaction(
                 async (transaction) => {
-                    const category = transaction.category.findUniqueOrThrow({
+                    const category = await transaction.category.findUniqueOrThrow({
                         where: {
                             id,
                         },
@@ -85,13 +83,13 @@ const categoryRepository = {
                     if (category.products.length != 0) {
                         throw new Error("Cannot delete category as it is used by some products");
                     }
-                    transaction.category.delete({
+                    const deletedCategory = await transaction.category.delete({
                         where: { id },
                     });
-                    return;
+                    return deletedCategory;
                 }   
             )
-            return Result.ok(undefined);
+            return Result.ok(transactionResult);
         } catch (error) {
             return handleRepositoryErrors(error);
         }
