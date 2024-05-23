@@ -1,9 +1,15 @@
-import { Type, Product, Category } from "@prisma/client";
+import { Product, Category } from "@prisma/client";
 import { BaseModelId } from "../types";
 import { CategoryDto } from "../category/types";
 
 export type ProductWithCategories = Product & {
     categories: Category[],
+}
+
+export type Type = "PRODUCT" | "SERVICE";
+export enum TypeValues {
+    PRODUCT = "PRODUCT",
+    SERVICE = "SERVICE"
 }
 
 export type ProductDto = BaseModelId & {
