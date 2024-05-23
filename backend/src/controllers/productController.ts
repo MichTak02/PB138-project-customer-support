@@ -88,7 +88,7 @@ const deleteProduct = async (req: Request, res: Response) => {
     res.status(200).send({});
 };
 
-export const categoryController = {
+export const productController = {
     createProduct,
     getProduct,
     getProducts,

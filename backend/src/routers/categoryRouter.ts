@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { categoryController } from "../controllers/categoryController";
 
-export const productsRouter = Router();
+export const categoryRouter = Router();
 
-productsRouter.post("/", categoryController.createCategory);
-productsRouter.get("/:id", categoryController.getCategory);
-productsRouter.get("/", categoryController.getCategories);
-productsRouter.put("/:id", categoryController.updateCategory);
-productsRouter.delete("/:id", categoryController.deleteCategory);
+categoryRouter.post("/", categoryController.createCategory);
+categoryRouter.get("/:id", categoryController.getCategory);
+categoryRouter.get("/", categoryController.getCategories);
+categoryRouter.put("/:id", categoryController.updateCategory);
+categoryRouter.delete("/:id", categoryController.deleteCategory);

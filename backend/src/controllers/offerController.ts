@@ -1,7 +1,7 @@
 import { Request, Response, query } from "express";
 import offerRepository from "../repositories/offer/offerRepository";
 import { parseRequest } from "../utils/controllerUtils";
-import { createOfferSchema } from "../validationSchemas/offerValidationSchemas";
+import { createOfferSchema, deleteOfferSchema, getOfferSchema, getOffersSchema, updateOfferSchema } from "../validationSchemas/offerValidationSchemas";
 
 const createOffer = async (req: Request, res: Response) => {
     const request = await parseRequest(createOfferSchema, req, res);
@@ -88,7 +88,7 @@ const deleteOffer = async (req: Request, res: Response) => {
     res.status(200).send({});
 };
 
-export const categoryController = {
+export const offerController = {
     createOffer,
     getOffer,
     getOffers,
