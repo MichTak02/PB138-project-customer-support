@@ -1,8 +1,11 @@
 import {BaseModelId} from "../types";
 import {ChatCommunicationDto, VoiceCommunicationDto} from "../communication/types";
-import {Role as PrismaRole} from "@prisma/client";
 
-export type Role = PrismaRole
+export type Role = "REGULAR" | "ADMIN";
+export enum RoleValues {
+    REGULAR = "REGULAR",
+    ADMIN = "ADMIN"
+}
 
 export type UserDto = BaseModelId & {
     email:        string
