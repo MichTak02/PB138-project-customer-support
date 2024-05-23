@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import type { ZodSchema, ZodTypeDef } from 'zod';
 import { fromZodError } from 'zod-validation-error';
+import {ConflictError, InternalError, NotFoundError} from "../errors/errors";
 
 export const parseRequest = async <
     Output,
@@ -24,4 +25,28 @@ export const parseRequest = async <
     }
 
     return parsedRequest.data;
+};
+
+export const handleControllerErrors = (e: Error, res: Response) => {
+    if (e instanceof NotFoundError) {
+        res.status(404).send({
+            name: e.name || 'NotFoundError',
+            message: e.message || 'Entity not found',
+        });
+    } else if (e instanceof InternalError) {
+        res.status(500).send({
+            name: e.name || 'InternalError',
+            message: e.message || 'Something went wrong on our side.',
+        });
+    } else if (e instanceof ConflictError) {
+        res.status(400).send({
+            name: e.name || 'ConflictError',
+            message: e.message || 'Conflict',
+        });
+    } else {
+        res.status(500).send({
+            name: 'UnknownError',
+            message: 'Something went wrong.',
+        });
+    }
 };
