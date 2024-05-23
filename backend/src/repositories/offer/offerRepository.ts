@@ -3,10 +3,7 @@ import prisma from "../client";
 import { DbResult } from "../types";
 import { OfferCreateDto, OfferDto, OfferExtendedDto, OfferFilter, OfferUpdateDto } from "./types";
 import { offerModelToOfferDto, offerModelToOfferExtendedDto, offerToProductModelToOfferToProductExtendedDto } from "./mappers";
-import { handleRepositoryErrors } from "../../utils/repositoryUtils";
-import { error } from "console";
-
-const OFFERS_PER_PAGE = 20;
+import {handleRepositoryErrors, READ_MANY_TAKE} from "../../utils/repositoryUtils";
 
 const offerRepository = {
     async create(data: OfferCreateDto): DbResult<OfferDto> {
@@ -20,12 +17,12 @@ const offerRepository = {
                             offerToProducts: true,
                         },
                     });
-                    offerToProducts.forEach(async (offerToProduct) => {
+                    for (const offerToProduct of offerToProducts) {
                         const otp = await transaction.offerToProduct.create({
                             data: offerToProduct,
                         });
                         offer.offerToProducts.push(otp);
-                    });
+                    }
                     return offer;
                 }
             )
@@ -61,7 +58,7 @@ const offerRepository = {
         try {
             if (!cursorId) {
                 const offers = await prisma.offer.findMany({
-                    take: OFFERS_PER_PAGE,
+                    take: READ_MANY_TAKE,
                     orderBy: { id: 'asc'},
                     where: filter,
                     include: {
@@ -81,7 +78,7 @@ const offerRepository = {
             const offers = await prisma.offer.findMany({
                 skip: 1,
                 cursor: { id: cursorId },
-                take: OFFERS_PER_PAGE,
+                take: READ_MANY_TAKE,
                 orderBy: { id: 'asc'},
                 where: filter,
                 include: {
@@ -162,12 +159,24 @@ const offerRepository = {
         }
     },
 
-    async delete(id: number): DbResult<void> {
+    async delete(id: number): DbResult<OfferDto> {
         try {
-            await prisma.offer.delete({
+            const deleteOfferToProduct = prisma.offerToProduct.deleteMany({
+                where: {
+                    offerId: id
+                }
+            })
+
+            const deleteOffer = prisma.offer.delete({
                 where: { id },
+                include: {
+                    offerToProducts: true,
+                },
             });
-            return Result.ok(undefined);
+
+            const [_, deletedOffer] = await prisma.$transaction([deleteOfferToProduct, deleteOffer])
+
+            return Result.ok(offerModelToOfferDto(deletedOffer));
         } catch (error) {
             return handleRepositoryErrors(error);
         }
