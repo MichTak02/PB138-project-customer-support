@@ -1,5 +1,6 @@
 import {BaseModelId} from "../types";
 import {ChatCommunicationDto, VoiceCommunicationDto} from "../communication/types";
+import {ProductDto} from "../product/types";
 
 export type CustomerDto = BaseModelId & {
     name:     string
