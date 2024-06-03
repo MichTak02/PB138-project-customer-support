@@ -8,7 +8,7 @@ import {userModelToUserDto, userModelToUserExtendedDto} from "./mappers";
 export const userRepository = {
     async create (data: UserCreateDto): DbResult<UserDto> {
         try {
-            const user = await prisma.user.create({ data });
+            const user = await prisma.user.create({data: { ...data, createdOn: new Date() }});
 
             return Result.ok(userModelToUserDto(user));
         } catch (error) {

@@ -15,8 +15,8 @@ export type UserDto = BaseModelId & {
     role:         Role
 }
 
-export type UserCreateDto = Omit<UserDto, "id">;
-export type UserUpdateDto = Partial<Omit<UserCreateDto, "createdOn">>
+export type UserCreateDto = Omit<UserDto, "id" | "createdOn">;
+export type UserUpdateDto = Partial<Omit<UserCreateDto, "email">>
 export type UserExtendedDto = UserDto & {
     chatCommunications:    ChatCommunicationDto[]
     voiceCommunications:   VoiceCommunicationDto[]
