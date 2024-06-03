@@ -25,7 +25,7 @@ export const updateCategorySchema = z.object({
     id: z.coerce.number(),
   }),
   body: z.object({
-    name: z.string().min(1).max(255),
+    name: z.string().min(1).max(255).optional(),
   }),
 });
 

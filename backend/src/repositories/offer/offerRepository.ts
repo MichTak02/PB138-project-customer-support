@@ -182,3 +182,5 @@ const offerRepository = {
         }
     }
 }
+
+export default offerRepository;
