@@ -6,6 +6,8 @@ export type ChatCommunicationDto = BaseModelId & {
     message:                string
     timestamp:              Date
     isUserSent:             boolean
+    customerId: number
+    userId: number
 };
 export type ChatCommunicationCreateDto = Omit<ChatCommunicationDto, "id" | "timestamp">
     & {
@@ -13,7 +15,7 @@ export type ChatCommunicationCreateDto = Omit<ChatCommunicationDto, "id" | "time
     userId: number
 };
 export type ChatCommunicationUpdateDto = Partial<ChatCommunicationCreateDto>
-export type ChatCommunicationExtendedDto = ChatCommunicationDto & {
+export type ChatCommunicationExtendedDto = Omit<ChatCommunicationDto, "userId" | "customerId"> & {
     user:                   UserDto
     customer:               CustomerDto
 }
@@ -26,6 +28,8 @@ export type VoiceCommunicationDto = BaseModelId & {
     start:                  Date
     end:                    Date
     isUserStarted:          boolean
+    customerId: number
+    userId: number
 }
 
 export type VoiceCommunicationCreateDto = Omit<VoiceCommunicationDto, "id">
@@ -35,7 +39,7 @@ export type VoiceCommunicationCreateDto = Omit<VoiceCommunicationDto, "id">
 };
 
 export type VoiceCommunicationUpdateDto = Partial<VoiceCommunicationCreateDto>
-export type VoiceCommunicationExtendedDto = VoiceCommunicationDto & {
+export type VoiceCommunicationExtendedDto = Omit<VoiceCommunicationDto, "userId" | "customerId"> & {
     user:                   UserDto
     customer:               CustomerDto
 }
