@@ -1,5 +1,4 @@
 import { Router } from "express";
-import multer from 'multer';
 import { chatCommunicationController } from "../controllers/chatCommunicationController";
 
 export const offerRouter = Router();
