@@ -117,23 +117,23 @@ export const chatCommunicationRepository = {
     async readMany(cursorId: number | undefined, filter?: ChatCommunicationFilters): DbResult<ChatCommunicationDto[]> {
         try {
             if (!cursorId) {
-                const users = await prisma.chatCommunication.findMany({
+                const comms = await prisma.chatCommunication.findMany({
                     take: READ_MANY_TAKE,
                     orderBy: { id: 'asc' },
                     where: filter
                 });
 
-                return Result.ok(users.map(u => chatCommunicationModelToChatCommunicationDto(u)));
+                return Result.ok(comms.map(u => chatCommunicationModelToChatCommunicationDto(u)));
             }
 
-            const users = await prisma.chatCommunication.findMany({
+            const comms = await prisma.chatCommunication.findMany({
                 take: READ_MANY_TAKE,
                 skip: 1,
                 cursor: { id: cursorId },
                 orderBy: { id: 'asc' },
                 where: filter
             });
-            return Result.ok(users.map(u => chatCommunicationModelToChatCommunicationDto(u)));
+            return Result.ok(comms.map(u => chatCommunicationModelToChatCommunicationDto(u)));
         } catch (error) {
             return handleRepositoryErrors(error);
         }
@@ -147,17 +147,17 @@ export const chatCommunicationRepository = {
             }
 
             if (!cursorId) {
-                const users = await prisma.chatCommunication.findMany({
+                const comms = await prisma.chatCommunication.findMany({
                     take: READ_MANY_TAKE,
                     orderBy: { id: 'asc' },
                     include: includeObj,
                     where: filter
                 });
 
-                return Result.ok(users.map(u => chatCommunicationModelToChatCommunicationExtendedDto(u)));
+                return Result.ok(comms.map(u => chatCommunicationModelToChatCommunicationExtendedDto(u)));
             }
 
-            const users = await prisma.chatCommunication.findMany({
+            const comms = await prisma.chatCommunication.findMany({
                 take: READ_MANY_TAKE,
                 skip: 1,
                 cursor: { id: cursorId },
@@ -165,7 +165,7 @@ export const chatCommunicationRepository = {
                 include: includeObj,
                 where: filter
             });
-            return Result.ok(users.map(u => chatCommunicationModelToChatCommunicationExtendedDto(u)));
+            return Result.ok(comms.map(u => chatCommunicationModelToChatCommunicationExtendedDto(u)));
         } catch (error) {
             return handleRepositoryErrors(error);
         }
@@ -242,23 +242,23 @@ export const voiceCommunicationRepository = {
     async readMany(cursorId: number | undefined, filter?: VoiceCommunicationFilters): DbResult<VoiceCommunicationDto[]> {
         try {
             if (!cursorId) {
-                const users = await prisma.voiceCommunication.findMany({
+                const comms = await prisma.voiceCommunication.findMany({
                     take: READ_MANY_TAKE,
                     orderBy: { id: 'asc' },
                     where: filter
                 });
 
-                return Result.ok(users.map(u => voiceCommunicationModelToVoiceCommunicationDto(u)));
+                return Result.ok(comms.map(u => voiceCommunicationModelToVoiceCommunicationDto(u)));
             }
 
-            const users = await prisma.voiceCommunication.findMany({
+            const comms = await prisma.voiceCommunication.findMany({
                 take: READ_MANY_TAKE,
                 skip: 1,
                 cursor: { id: cursorId },
                 orderBy: { id: 'asc' },
                 where: filter
             });
-            return Result.ok(users.map(u => voiceCommunicationModelToVoiceCommunicationDto(u)));
+            return Result.ok(comms.map(u => voiceCommunicationModelToVoiceCommunicationDto(u)));
         } catch (error) {
             return handleRepositoryErrors(error);
         }
@@ -272,17 +272,17 @@ export const voiceCommunicationRepository = {
             }
 
             if (!cursorId) {
-                const users = await prisma.voiceCommunication.findMany({
+                const comms = await prisma.voiceCommunication.findMany({
                     take: READ_MANY_TAKE,
                     orderBy: { id: 'asc' },
                     include: includeObj,
                     where: filter
                 });
 
-                return Result.ok(users.map(u => voiceCommunicationModelToVoiceCommunicationExtendedDto(u)));
+                return Result.ok(comms.map(u => voiceCommunicationModelToVoiceCommunicationExtendedDto(u)));
             }
 
-            const users = await prisma.voiceCommunication.findMany({
+            const comms = await prisma.voiceCommunication.findMany({
                 take: READ_MANY_TAKE,
                 skip: 1,
                 cursor: { id: cursorId },
@@ -290,7 +290,7 @@ export const voiceCommunicationRepository = {
                 include: includeObj,
                 where: filter
             });
-            return Result.ok(users.map(u => voiceCommunicationModelToVoiceCommunicationExtendedDto(u)));
+            return Result.ok(comms.map(u => voiceCommunicationModelToVoiceCommunicationExtendedDto(u)));
         } catch (error) {
             return handleRepositoryErrors(error);
         }
