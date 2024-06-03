@@ -7,7 +7,7 @@ export type ChatCommunicationDto = BaseModelId & {
     timestamp:              Date
     isUserSent:             boolean
 };
-export type ChatCommunicationCreateDto = Omit<ChatCommunicationDto, "id">
+export type ChatCommunicationCreateDto = Omit<ChatCommunicationDto, "id" | "timestamp">
     & {
     customerId: number
     userId: number

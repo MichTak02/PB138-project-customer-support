@@ -22,7 +22,7 @@ export const chatCommunicationRepository = {
             const chatCommunication = await prisma.chatCommunication.create({
                 data: {
                     message: data.message,
-                    timestamp: data.timestamp,
+                    timestamp: new Date(),
                     isUserSent: data.isUserSent,
                     user: {
                         connect: {
@@ -48,7 +48,7 @@ export const chatCommunicationRepository = {
             const updatedChatCommunication = await prisma.chatCommunication.update({
                 data: {
                     message: data.message,
-                    timestamp: data.timestamp,
+                    timestamp: new Date(),
                     isUserSent: data.isUserSent,
                     user: {
                         connect: {
