@@ -13,10 +13,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-export const offerRouter = Router();
+export const voiceCommunicationRouter = Router();
 
-offerRouter.post("/", upload.single('file'), voiceCommunicationController.createVoiceCommunication);
-offerRouter.get("/:id", voiceCommunicationController.getVoiceCommunication);
-offerRouter.get("/", voiceCommunicationController.getVoiceCommunications);
-offerRouter.put("/:id", voiceCommunicationController.updateVoiceCommunication);
-offerRouter.delete("/:id", voiceCommunicationController.deleteVoiceCommunication);
+voiceCommunicationRouter.post("/", upload.single('file'), voiceCommunicationController.createVoiceCommunication);
+voiceCommunicationRouter.get("/:id", voiceCommunicationController.getVoiceCommunication);
+voiceCommunicationRouter.get("/", voiceCommunicationController.getVoiceCommunications);
+voiceCommunicationRouter.put("/:id", voiceCommunicationController.updateVoiceCommunication);
+voiceCommunicationRouter.delete("/:id", voiceCommunicationController.deleteVoiceCommunication);
