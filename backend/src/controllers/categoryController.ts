@@ -1,4 +1,4 @@
-import { Request, Response, query } from "express";
+import { Request, Response } from "express";
 import { handleControllerErrors, parseRequest } from "../utils/controllerUtils";
 import { createCategorySchema, deleteCategorySchema, getCategoriesSchema, getCategorySchema, updateCategorySchema } from "../validationSchemas/categoryValidationSchemas";
 import categoryRepository from "../repositories/category/categoryRepository";
@@ -61,9 +61,10 @@ const updateCategory = async (req: Request, res: Response) => {
         return;
     }
 
-    const category = { id: request.params.id, name: request.body.name };
+    const id = request.params.id
+    const category = request.body;
 
-    const updatedCategoryResult = await categoryRepository.update(category);
+    const updatedCategoryResult = await categoryRepository.update(id, category);
     if (updatedCategoryResult.isErr) {
         return handleControllerErrors(updatedCategoryResult.error, res);
     }
