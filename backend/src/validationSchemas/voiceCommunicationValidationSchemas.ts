@@ -48,3 +48,9 @@ export const deleteVoiceCommunicationRequestSchema = z.object({
         id: z.coerce.number(),
     }),
 });
+
+export const getAudioFileRequestSchema = z.object({
+    params: z.object({
+        path: z.string().min(1)
+    })
+})
