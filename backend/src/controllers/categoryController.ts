@@ -61,9 +61,10 @@ const updateCategory = async (req: Request, res: Response) => {
         return;
     }
 
-    const category = { id: request.params.id, name: request.body.name };
+    const id = request.params.id
+    const category = request.body;
 
-    const updatedCategoryResult = await categoryRepository.update(category);
+    const updatedCategoryResult = await categoryRepository.update(id, category);
     if (updatedCategoryResult.isErr) {
         return handleControllerErrors(updatedCategoryResult.error, res);
     }
