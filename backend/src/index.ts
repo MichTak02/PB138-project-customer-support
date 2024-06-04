@@ -29,7 +29,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 passport.use(passportLocalStrategy());
-app.use(sessionMiddleware)
+app.use(sessionMiddleware())
 
 app.use("/auth", authRouter)
 app.use("/categories", categoryRouter)
