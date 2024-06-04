@@ -6,7 +6,6 @@ import {authz} from "../middleware/authMiddleware";
 import {RoleValues} from "../repositories/user/types";
 import path from "node:path";
 import {parseRequest} from "../utils/controllerUtils";
-import {createCategorySchema} from "../validationSchemas/categoryValidationSchemas";
 import {getAudioFileRequestSchema} from "../validationSchemas/voiceCommunicationValidationSchemas";
 
 const storage = multer.diskStorage({
