@@ -23,7 +23,7 @@ export const getOfferSchema = z.object({
 export const getOffersSchema = z.object({
   query: z.object({
     page: z.coerce.number().optional().optional(),
-    name: z.string().min(1).max(255),
+    name: z.string().min(1).max(255).optional(),
     description: z.string().min(1).max(1020).optional(),
   }),
 });
