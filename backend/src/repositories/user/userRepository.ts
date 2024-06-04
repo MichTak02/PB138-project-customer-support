@@ -8,7 +8,7 @@ import {userModelToUserDto, userModelToUserExtendedDto} from "./mappers";
 export const userRepository = {
     async create (data: UserCreateDto): DbResult<UserDto> {
         try {
-            const user = await prisma.user.create({ data });
+            const user = await prisma.user.create({data: { ...data, createdOn: new Date() }});
 
             return Result.ok(userModelToUserDto(user));
         } catch (error) {
@@ -44,25 +44,14 @@ export const userRepository = {
         }
     },
 
-    /**
-     * Tries to authenticate the user by their email and password hash.
-     * @param email
-     * @param passwordHash
-     *
-     * @return User ID if successful
-     */
-    async login(email: string, passwordHash: string): DbResult<number> {
+    async getByEmail(email: string): DbResult<UserDto> {
         try {
-            const idObj = await prisma.user.findFirstOrThrow({
-                select: {
-                    id: true
-                },
+            const user = await prisma.user.findFirstOrThrow({
                 where : {
                     email: email,
-                    passwordHash: passwordHash
                 }
             });
-            return Result.ok(idObj.id);
+            return Result.ok(user);
         } catch (error) {
             return handleRepositoryErrors(error);
         }
@@ -155,7 +144,21 @@ export const userRepository = {
         }
     },
 
-
+    async exists(email: string): DbResult<boolean> {
+        try {
+            const idObj = await prisma.user.findFirst({
+                select: {
+                    id: true
+                },
+                where : {
+                    email: email,
+                }
+            });
+            return Result.ok(idObj !== null);
+        } catch (error) {
+            return handleRepositoryErrors(error);
+        }
+    },
 }
 
 export default userRepository;

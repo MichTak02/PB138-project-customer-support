@@ -8,12 +8,14 @@ import {
 import {userModelToUserDto} from "../user/mappers";
 import {customerModelToCustomerDto} from  "../customer/mappers"
 
-export const chatCommunicationModelToChatCommunicationDto = (chatCommunicationModel: ChatCommunication):
+export const chatCommunicationModelToChatCommunicationDto = (chatCommunicationModel: ChatCommunication & {userId: number, customerId: number}):
     ChatCommunicationDto => ({
     id: chatCommunicationModel.id,
     message: chatCommunicationModel.message,
     timestamp: chatCommunicationModel.timestamp,
     isUserSent: chatCommunicationModel.isUserSent,
+    userId: chatCommunicationModel.userId,
+    customerId: chatCommunicationModel.customerId
 });
 
 export const chatCommunicationModelToChatCommunicationExtendedDto = (chatCommunicationModel: ChatCommunication & {
@@ -28,13 +30,15 @@ export const chatCommunicationModelToChatCommunicationExtendedDto = (chatCommuni
     customer: customerModelToCustomerDto(chatCommunicationModel.customer)
 });
 
-export const voiceCommunicationModelToVoiceCommunicationDto = (voiceCommunicationModel: VoiceCommunication):
+export const voiceCommunicationModelToVoiceCommunicationDto = (voiceCommunicationModel: VoiceCommunication & {userId: number, customerId: number}):
     VoiceCommunicationDto => ({
     id: voiceCommunicationModel.id,
     filePath: voiceCommunicationModel.filePath,
     start: voiceCommunicationModel.start,
     end: voiceCommunicationModel.end,
-    isUserStarted: voiceCommunicationModel.isUserStarted
+    isUserStarted: voiceCommunicationModel.isUserStarted,
+    userId: voiceCommunicationModel.userId,
+    customerId: voiceCommunicationModel.customerId
 });
 
 export const voiceCommunicationModelToVoiceCommunicationExtendedDto = (voiceCommunicationModel: VoiceCommunication & {

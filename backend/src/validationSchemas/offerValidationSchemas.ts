@@ -5,7 +5,6 @@ export const createOfferSchema = z.object({
     name: z.string().min(1).max(255),
     description: z.string().min(1).max(1020),
     offerToProducts: z.array(z.object({
-        offerId: z.coerce.number(),
         productId: z.coerce.number(),
         productQuantity: z.coerce.number(),
         newPrice: z.coerce.number(),
@@ -23,7 +22,7 @@ export const getOfferSchema = z.object({
 export const getOffersSchema = z.object({
   query: z.object({
     page: z.coerce.number().optional().optional(),
-    name: z.string().min(1).max(255),
+    name: z.string().min(1).max(255).optional(),
     description: z.string().min(1).max(1020).optional(),
   }),
 });

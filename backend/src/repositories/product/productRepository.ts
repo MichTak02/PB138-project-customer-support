@@ -73,13 +73,14 @@ const productRepository = {
         }
     },
 
-    async update(data: ProductUpdateDto): DbResult<ProductDto> {
+    async update(id: number, data: ProductUpdateDto): DbResult<ProductDto> {
         try {
             const product = await prisma.product.update({
                 where: {
-                    id: data.id,
+                    id: id,
                 },
                 data: {
+                    name: data.name,
                     type: data.type,
                     price: data.price,
                     description: data.description,

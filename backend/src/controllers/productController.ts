@@ -1,7 +1,7 @@
 import productRepository from "../repositories/product/productRepository";
-import { parseRequest } from "../utils/controllerUtils";
+import {handleControllerErrors, parseRequest} from "../utils/controllerUtils";
 import { createProductSchema, deleteProductSchema, getProductSchema, getProductsSchema, updateProductSchema } from "../validationSchemas/productValidationSchemas";
-import { Request, Response, query } from "express";
+import { Request, Response } from "express";
 
 const createProduct = async (req: Request, res: Response) => {
     const request = await parseRequest(createProductSchema, req, res);
@@ -61,9 +61,10 @@ const updateProduct = async (req: Request, res: Response) => {
         return;
     }
 
-    const product = { id: request.params.id, ...request.body };
+    const productData = request.body;
+    console.log(productData);
 
-    const updatedProductResult = await productRepository.update(product);
+    const updatedProductResult = await productRepository.update(request.params.id, productData);
     if (updatedProductResult.isErr) {
         return handleControllerErrors(updatedProductResult.error, res);
     }
