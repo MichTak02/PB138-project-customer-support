@@ -1,6 +1,6 @@
-import { Request, Response, query } from "express";
+import { Request, Response } from "express";
 import offerRepository from "../repositories/offer/offerRepository";
-import { parseRequest } from "../utils/controllerUtils";
+import {handleControllerErrors, parseRequest} from "../utils/controllerUtils";
 import { createOfferSchema, deleteOfferSchema, getOfferSchema, getOffersSchema, updateOfferSchema } from "../validationSchemas/offerValidationSchemas";
 
 const createOffer = async (req: Request, res: Response) => {

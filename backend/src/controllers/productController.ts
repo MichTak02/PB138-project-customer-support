@@ -1,7 +1,7 @@
 import productRepository from "../repositories/product/productRepository";
-import { parseRequest } from "../utils/controllerUtils";
+import {handleControllerErrors, parseRequest} from "../utils/controllerUtils";
 import { createProductSchema, deleteProductSchema, getProductSchema, getProductsSchema, updateProductSchema } from "../validationSchemas/productValidationSchemas";
-import { Request, Response, query } from "express";
+import { Request, Response } from "express";
 
 const createProduct = async (req: Request, res: Response) => {
     const request = await parseRequest(createProductSchema, req, res);
