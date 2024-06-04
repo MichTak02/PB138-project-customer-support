@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { chatCommunicationController } from "../controllers/chatCommunicationController";
 
-export const offerRouter = Router();
+export const chatCommunicationRouter = Router();
 
-offerRouter.post("/", chatCommunicationController.createChatCommunication);
-offerRouter.get("/:id", chatCommunicationController.getChatCommunication);
-offerRouter.get("/", chatCommunicationController.getChatCommunications);
-offerRouter.put("/:id", chatCommunicationController.updateChatCommunication);
-offerRouter.delete("/:id", chatCommunicationController.deleteChatCommunication);
+chatCommunicationRouter.post("/", chatCommunicationController.createChatCommunication);
+chatCommunicationRouter.get("/:id", chatCommunicationController.getChatCommunication);
+chatCommunicationRouter.get("/", chatCommunicationController.getChatCommunications);
+chatCommunicationRouter.put("/:id", chatCommunicationController.updateChatCommunication);
+chatCommunicationRouter.delete("/:id", chatCommunicationController.deleteChatCommunication);
