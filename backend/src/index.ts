@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { config } from 'dotenv';
 import { env } from 'process';
+import passport from "passport";
 import {categoryRouter} from "./routers/categoryRouter";
 import {productRouter} from "./routers/productRouter";
 import {offerRouter} from "./routers/offerRouter";
@@ -9,6 +10,9 @@ import {userRouter} from "./routers/userRouter";
 import {customerRouter} from "./routers/customerRouter";
 import {chatCommunicationRouter} from "./routers/chatCommunicationRouter";
 import {voiceCommunicationRouter} from "./routers/voiceCommunicationRouter";
+import {passportLocalStrategy} from "./auth/passportStrategies";
+import sessionMiddleware from "./middleware/sessionMiddleware";
+import {authRouter} from "./routers/authRouter";
 
 config();
 
@@ -24,6 +28,10 @@ app.use(express.json());
 // parse URL encoded strings
 app.use(express.urlencoded({ extended: true }));
 
+passport.use(passportLocalStrategy());
+app.use(sessionMiddleware)
+
+app.use("/auth", authRouter)
 app.use("/categories", categoryRouter)
 app.use("/products", productRouter)
 app.use("/offers", offerRouter)
@@ -39,7 +47,7 @@ app.use((_req, res) => {
 if (env.NODE_ENV !== 'test') {
     app.listen(port, () => {
         console.log(
-            `[${new Date().toISOString()}] RESTful API for iteration 02 is listening on port ${port}`,
+            `[${new Date().toISOString()}] Customer support API is listening on port ${port}`,
         );
     });
 }
