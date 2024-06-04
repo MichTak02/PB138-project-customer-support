@@ -44,10 +44,8 @@ app.use((_req, res) => {
     res.status(404).send('Not found');
 });
 
-if (env.NODE_ENV !== 'test') {
-    app.listen(port, () => {
-        console.log(
-            `[${new Date().toISOString()}] Customer support API is listening on port ${port}`,
-        );
-    });
-}
+app.listen(port, () => {
+    console.log(
+        `[${new Date().toISOString()}] Customer support API is listening on port ${port}`,
+    );
+});
