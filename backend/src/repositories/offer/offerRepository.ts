@@ -2,7 +2,7 @@ import { Result } from "@badrap/result";
 import prisma from "../client";
 import { DbResult } from "../types";
 import { OfferCreateDto, OfferDto, OfferExtendedDto, OfferFilter, OfferUpdateDto } from "./types";
-import { offerModelToOfferDto, offerModelToOfferExtendedDto, offerToProductModelToOfferToProductExtendedDto } from "./mappers";
+import { offerModelToOfferDto, offerModelToOfferExtendedDto } from "./mappers";
 import {handleRepositoryErrors, READ_MANY_TAKE} from "../../utils/repositoryUtils";
 
 const offerRepository = {
@@ -19,7 +19,7 @@ const offerRepository = {
                     });
                     for (const offerToProduct of offerToProducts) {
                         const otp = await transaction.offerToProduct.create({
-                            data: offerToProduct,
+                            data: {offerId: offer.id, ...offerToProduct},
                         });
                         offer.offerToProducts.push(otp);
                     }
@@ -132,7 +132,7 @@ const offerRepository = {
                                 });
                             }
                         });
-                    };
+                    }
                     const offer = transaction.offer.update({
                         where: { id },
                         data: {
