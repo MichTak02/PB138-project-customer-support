@@ -61,9 +61,10 @@ const updateProduct = async (req: Request, res: Response) => {
         return;
     }
 
-    const product = { id: request.params.id, ...request.body };
+    const productData = request.body;
+    console.log(productData);
 
-    const updatedProductResult = await productRepository.update(product);
+    const updatedProductResult = await productRepository.update(request.params.id, productData);
     if (updatedProductResult.isErr) {
         return handleControllerErrors(updatedProductResult.error, res);
     }

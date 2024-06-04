@@ -21,7 +21,7 @@ export type ProductDto = BaseModelId & {
 }
 
 export type ProductCreateDto = Omit<ProductDto, "id">;
-export type ProductUpdateDto = Partial<ProductDto>;
+export type ProductUpdateDto = Partial<ProductCreateDto>;
 
 export type ProductExtendedDto = Omit<ProductDto, "categoryIds"> & {
     categories: CategoryDto[],
