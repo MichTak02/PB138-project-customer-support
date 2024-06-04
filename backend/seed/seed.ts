@@ -2,7 +2,7 @@ import client from "../src/repositories/client";
 import {faker} from '@faker-js/faker';
 faker.seed(42);
 import {
-    userData, customerData, productData, categoryData, offerData,
+    userDataPromise, customerData, productData, categoryData, offerData,
     offerToProductData, chatCommunicationData, voiceCommunicationData, ENTRY_COUNT
 } from "./data";
 
@@ -22,37 +22,42 @@ function getRandomValues<T>(arr: T[], n: number): T[] {
 
 const seed = async () => {
     console.log(`Start seeding ...`);
+    const userData = await userDataPromise;
+
+    const offerIds = getRandomValues(offerData.map(o => o.id), ENTRY_COUNT);
+    const productIds = getRandomValues(productData.map(p => p.id), ENTRY_COUNT);
 
     for (let index = 0; index < ENTRY_COUNT; index++) {
-        const [offerId] = getRandomValues(offerData.map(o => o.id), 1);
-        const [productId] = getRandomValues(productData.map(p => p.id), 1);
-        offerToProductData[index].offerId = offerId;
-        offerToProductData[index].productId = productId;
+        offerToProductData[index].offerId = offerIds[index];
+        offerToProductData[index].productId = productIds[index];
     }
 
-    for (let index = 0; index < ENTRY_COUNT; index++) {
-        const [customerId] = getRandomValues(customerData.map(o => o.id), 1);
-        const [userId] = getRandomValues(userData.map(p => p.id), 1);
-        chatCommunicationData[index].customerId = customerId;
-        chatCommunicationData[index].userId = userId;
-    }
+    const customerIds = getRandomValues(customerData.map(o => o.id), ENTRY_COUNT);
+    const userIds = getRandomValues(userData.map(p => p.id), ENTRY_COUNT);
 
     for (let index = 0; index < ENTRY_COUNT; index++) {
-        const [customerId] = getRandomValues(customerData.map(o => o.id), 1);
-        const [userId] = getRandomValues(userData.map(p => p.id), 1);
-        voiceCommunicationData[index].customerId = customerId;
-        voiceCommunicationData[index].userId = userId;
+        chatCommunicationData[index].customerId = customerIds[index];
+        chatCommunicationData[index].userId = userIds[index];
+    }
+
+    const customerIds2 = getRandomValues(customerData.map(o => o.id), ENTRY_COUNT);
+    const userIds2 = getRandomValues(userData.map(p => p.id), ENTRY_COUNT);
+
+    for (let index = 0; index < ENTRY_COUNT; index++) {
+        voiceCommunicationData[index].customerId = customerIds2[index];
+        voiceCommunicationData[index].userId = userIds2[index];
     }
 
     await client.$transaction(async (tx) => {
+        await tx.chatCommunication.deleteMany();
+        await tx.voiceCommunication.deleteMany();
         await tx.user.deleteMany();
         await tx.customer.deleteMany();
         await tx.category.deleteMany();
         await tx.offerToProduct.deleteMany();
         await tx.offer.deleteMany();
         await tx.product.deleteMany();
-        await tx.chatCommunication.deleteMany();
-        await tx.voiceCommunication.deleteMany();
+
 
         await tx.user.createMany({data: userData});
         await tx.customer.createMany({data: customerData});

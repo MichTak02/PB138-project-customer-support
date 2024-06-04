@@ -5,7 +5,7 @@ import {createPasswordHash} from "../src/utils/userUtils";
 
 export const ENTRY_COUNT = 10;
 
-export const userData = createPasswordHash("1234").then((h) => {
+export const userDataPromise = createPasswordHash("1234").then((h) => {
     return Array.from({length: ENTRY_COUNT}).map(() => ({
         id: faker.number.int({min: 0, max: 1000000}),
         email: faker.internet.email(),
