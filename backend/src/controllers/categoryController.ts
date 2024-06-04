@@ -1,4 +1,4 @@
-import { Request, Response, query } from "express";
+import { Request, Response } from "express";
 import { handleControllerErrors, parseRequest } from "../utils/controllerUtils";
 import { createCategorySchema, deleteCategorySchema, getCategoriesSchema, getCategorySchema, updateCategorySchema } from "../validationSchemas/categoryValidationSchemas";
 import categoryRepository from "../repositories/category/categoryRepository";
