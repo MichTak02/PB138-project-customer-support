@@ -13,6 +13,7 @@ import {voiceCommunicationRouter} from "./routers/voiceCommunicationRouter";
 import {passportLocalStrategy} from "./auth/passportStrategies";
 import sessionMiddleware from "./middleware/sessionMiddleware";
 import {authRouter} from "./routers/authRouter";
+import {offerToProductRouter} from "./routers/offerToProductRouter";
 
 config();
 
@@ -35,6 +36,7 @@ app.use("/auth", authRouter)
 app.use("/categories", categoryRouter)
 app.use("/products", productRouter)
 app.use("/offers", offerRouter)
+app.use("/offerToProducts", offerToProductRouter)
 app.use("/users", userRouter)
 app.use("/customers", customerRouter)
 app.use("/chatCommunications", chatCommunicationRouter)
