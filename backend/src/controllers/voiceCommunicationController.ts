@@ -51,12 +51,24 @@ const getVoiceCommunication = async (req: Request, res: Response) => {
 
 const updateVoiceCommunication = async (req: Request, res: Response) => {
     const request = await parseRequest(updateVoiceCommunicationRequestSchema, req, res);
-    if (request === null) return;
+    if (request === null) {
+        return;
+    }
 
     const voiceCommunicationId = request.params.id;
     const voiceCommunicationData = request.body;
 
-    const updatedVoiceCommunication = await voiceCommunicationRepository.update(voiceCommunicationId, voiceCommunicationData);
+    if (req.file) {
+        const deletedAudio = await voiceCommunicationRepository.deleteVoiceCommunicationAudioFile(voiceCommunicationId);
+        if (deletedAudio.isErr) {
+            handleControllerErrors(deletedAudio.error, res);
+            return;
+        }
+    }
+
+    const updatedVoiceCommunication = await voiceCommunicationRepository
+        .update(voiceCommunicationId, {...voiceCommunicationData, filePath: req.file?.path ?? undefined});
+
     if (updatedVoiceCommunication.isErr) {
         handleControllerErrors(updatedVoiceCommunication.error, res);
         return;
@@ -68,9 +80,16 @@ const updateVoiceCommunication = async (req: Request, res: Response) => {
 
 const deleteVoiceCommunication = async (req: Request, res: Response) => {
     const request = await parseRequest(deleteVoiceCommunicationRequestSchema, req, res);
-    if (request === null) return;
-
+    if (request === null) {
+        return;
+    }
     const voiceCommunicationId = request.params.id;
+
+    const deletedAudio = await voiceCommunicationRepository.deleteVoiceCommunicationAudioFile(voiceCommunicationId);
+    if (deletedAudio.isErr) {
+        handleControllerErrors(deletedAudio.error, res);
+        return;
+    }
 
     const deleted = await voiceCommunicationRepository.delete(voiceCommunicationId);
     if (deleted.isErr) {
@@ -96,10 +115,26 @@ const getVoiceCommunications = async (req: Request, res: Response) => {
     res.status(200).send(voiceCommunications.value);
 };
 
+const getVoiceCommunicationAudioFilePath = async (req: Request, res: Response) => {
+    const request = await parseRequest(getVoiceCommunicationRequestSchema, req, res);
+    if (request === null) return;
+
+    const voiceCommunicationId = request.params.id;
+
+    const voiceCommunication = await voiceCommunicationRepository.getVoiceCommunicationAudioFilePath(voiceCommunicationId);
+    if (voiceCommunication.isErr) {
+        handleControllerErrors(voiceCommunication.error, res);
+        return;
+    }
+
+    res.status(200).send(voiceCommunication.value);
+};
+
 export const voiceCommunicationController = {
     createVoiceCommunication,
     getVoiceCommunication,
     updateVoiceCommunication,
     deleteVoiceCommunication,
-    getVoiceCommunications
+    getVoiceCommunications,
+    getVoiceCommunicationAudioFilePath
 }
