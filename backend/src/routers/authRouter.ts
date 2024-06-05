@@ -19,7 +19,7 @@ export const authRouter = Router();
 authRouter.post("/register", authController.register);
 authRouter.post("/login", passport.authenticate("local"), authController.login);
 
-authRouter.get("/logout", passport.session(), (req, res, next) => {
+authRouter.post("/logout", passport.session(), (req, res, next) => {
     req.logout(
         {
             keepSessionInfo: false,
