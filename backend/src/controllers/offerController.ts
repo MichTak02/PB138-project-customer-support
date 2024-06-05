@@ -61,9 +61,9 @@ const updateOffer = async (req: Request, res: Response) => {
         return;
     }
 
-    const offer = { id: request.params.id, ...request.body };
+    const offer = request.body;
 
-    const updatedOfferResult = await offerRepository.update(offer);
+    const updatedOfferResult = await offerRepository.update(request.params.id, offer);
     if (updatedOfferResult.isErr) {
         return handleControllerErrors(updatedOfferResult.error, res);
     }
@@ -85,7 +85,7 @@ const deleteOffer = async (req: Request, res: Response) => {
         return handleControllerErrors(deletedOfferResult.error, res);
     }
 
-    res.status(200).send({});
+    res.status(200).send(deletedOfferResult.value);
 };
 
 export const offerController = {
