@@ -1,63 +1,103 @@
+import React, { useState } from 'react';
 import Page from '../../components/base/Page';
-import {Typography} from '@mui/material';
-import {UserDto} from "../../../../backend/src/repositories/user/types.ts";
-import {DataGrid, GridRenderCellParams} from '@mui/x-data-grid';
-import Button from '@mui/material/Button';
+import { Typography, Button } from '@mui/material';
+import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
+import { useCustomers, useCreateCustomer, useUpdateCustomer, useDeleteCustomer } from '../../hooks/useCustomers';
+import { Customer } from '../../models/customer';
+import AddCustomerDialog from '../../components/dialogs/AddCustomerDialog';
+import EditCustomerDialog from '../../components/dialogs/EditCustomerDialog';
 
-export function CustomerManagement() {
-    const users: UserDto[] = [{
-        id: 1,
-        email: "email1",
-        displayName: "displayName1",
-        passwordHash: "passwordHash1",
-        createdOn: new Date(),
-        role: "ADMIN",
-    },
-        {
-            id: 2,
-            email: "email2",
-            displayName: "displayName2",
-            passwordHash: "passwordHash2",
-            createdOn: new Date(),
-            role: "ADMIN",
-        }
-    ]   // TODO: replace with userController when it's implemented
+const CustomerManagement: React.FC = () => {
+  const { data: customers, isLoading, error } = useCustomers();
+  const createCustomerMutation = useCreateCustomer();
+  const updateCustomerMutation = useUpdateCustomer();
+  const deleteCustomerMutation = useDeleteCustomer();
 
-    type UserRow = UserDto & { button: string };
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [currentCustomer, setCurrentCustomer] = useState<Customer | null>(null);
 
-    return (
-        <Page title="Customer Management">
-            <Typography component="p" variant="h5">
-                Manage your customers here.
-            </Typography>
-            <DataGrid
-                rows={users}
-                columns={[
-                    {field: 'id', headerName: 'ID', width: 70},
-                    {field: 'displayName', headerName: 'Display Name', width: 200},
-                    {field: 'email', headerName: 'Email', width: 200},
-                    {field: 'role', headerName: 'Role', width: 150},
-                    {field: 'createdOn', headerName: 'Created On', width: 200},
-                    {
-                        field: 'chat',
-                        headerName: 'Chat',
-                        width: 150,
-                        renderCell: (params) => (
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={() => console.log((params as GridRenderCellParams<UserRow>).row.displayName)}
-                            >
-                                Show chat
-                            </Button>
-                        ),
-                    },
-                ]}
-                disableRowSelectionOnClick
-            />
-        </Page>
+  const handleAddCustomer = (customer: { name: string; surname: string; email: string; phoneNumber: string }) => {
+    createCustomerMutation.mutate(customer);
+  };
 
-    );
-}
+  const handleEditCustomer = (id: number, customer: { name: string; surname: string; email: string; phoneNumber: string }) => {
+    updateCustomerMutation.mutate({ id, customer });
+  };
+
+  const handleDeleteCustomer = (id: number) => {
+    deleteCustomerMutation.mutate(id);
+  };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading customers</div>;
+
+  return (
+    <Page title="Customer Management">
+      <Typography component="h1" variant="h5">
+        Customer Management
+      </Typography>
+      <Button variant="contained" color="primary" onClick={() => setIsCreateDialogOpen(true)}>
+        Add Customer
+      </Button>
+      <DataGrid
+        rows={customers || []}
+        columns={[
+          { field: 'id', headerName: 'ID', width: 70 },
+          { field: 'name', headerName: 'Name', width: 200 },
+          { field: 'surname', headerName: 'Surname', width: 200 },
+          { field: 'email', headerName: 'Email', width: 250 },
+          { field: 'phoneNumber', headerName: 'Phone Number', width: 200 },
+          {
+            field: 'edit',
+            headerName: 'Edit',
+            width: 150,
+            renderCell: (params: GridRenderCellParams) => (
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => {
+                  setCurrentCustomer(params.row as Customer);
+                  setIsEditDialogOpen(true);
+                }}
+              >
+                Edit
+              </Button>
+            ),
+          },
+          {
+            field: 'delete',
+            headerName: 'Delete',
+            width: 150,
+            renderCell: (params: GridRenderCellParams) => (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => handleDeleteCustomer((params.row as Customer).id)}
+              >
+                Delete
+              </Button>
+            ),
+          },
+        ]}
+        disableRowSelectionOnClick
+      />
+
+      <AddCustomerDialog
+        open={isCreateDialogOpen}
+        onClose={() => setIsCreateDialogOpen(false)}
+        onAddCustomer={handleAddCustomer}
+      />
+
+      <EditCustomerDialog
+        open={isEditDialogOpen}
+        onClose={() => setIsEditDialogOpen(false)}
+        onEditCustomer={handleEditCustomer}
+        customer={currentCustomer}
+      />
+    </Page>
+  );
+};
 
 export default CustomerManagement;
+
