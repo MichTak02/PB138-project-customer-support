@@ -8,9 +8,17 @@ import {userModelToUserDto, userModelToUserExtendedDto} from "./mappers";
 export const userRepository = {
     async create (data: UserCreateDto): DbResult<UserDto> {
         try {
-            const user = await prisma.user.create({data: { ...data, createdOn: new Date() }});
+            const newUser = await prisma.user.create({
+                data: {
+                    email: data.email,
+                    displayName: data.displayName,
+                    passwordHash: data.passwordHash,
+                    createdOn: new Date(),
+                    role: data.role,
+                },
+            });
 
-            return Result.ok(userModelToUserDto(user));
+            return Result.ok(userModelToUserDto(newUser));
         } catch (error) {
             return handleRepositoryErrors(error);
         }
@@ -46,7 +54,7 @@ export const userRepository = {
 
     async getByEmail(email: string): DbResult<UserDto> {
         try {
-            const user = await prisma.user.findFirstOrThrow({
+            const user = await prisma.user.findUniqueOrThrow({
                 where : {
                     email: email,
                 }

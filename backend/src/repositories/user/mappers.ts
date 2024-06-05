@@ -1,5 +1,5 @@
 import {ChatCommunication, User, VoiceCommunication} from "@prisma/client";
-import {UserDto, UserExtendedDto} from "./types"
+import {UserDto, UserExtendedDto, UserInfoDto} from "./types"
 import {
     chatCommunicationModelToChatCommunicationDto,
     voiceCommunicationModelToVoiceCommunicationDto
@@ -9,9 +9,15 @@ export const userModelToUserDto = (userModel: User): UserDto => ({
     id: userModel.id,
     email: userModel.email,
     displayName: userModel.displayName,
-    passwordHash: userModel.passwordHash,
     createdOn: userModel.createdOn,
-    role: userModel.role
+    role: userModel.role,
+    passwordHash: userModel.passwordHash
+});
+
+export const userModelToUserInfoDto = (userModel: User): UserInfoDto => ({
+    id: userModel.id,
+    email: userModel.email,
+    displayName: userModel.displayName,
 });
 
 export const userModelToUserExtendedDto = (userModel: User & {
@@ -21,9 +27,9 @@ export const userModelToUserExtendedDto = (userModel: User & {
     id: userModel.id,
     email: userModel.email,
     displayName: userModel.displayName,
-    passwordHash: userModel.passwordHash,
     createdOn: userModel.createdOn,
     role: userModel.role,
+    passwordHash: userModel.passwordHash,
     chatCommunications: userModel.chatCommunications.map(cc => chatCommunicationModelToChatCommunicationDto(cc)),
     voiceCommunications: userModel.voiceCommunications.map(vc => voiceCommunicationModelToVoiceCommunicationDto(vc)),
 });

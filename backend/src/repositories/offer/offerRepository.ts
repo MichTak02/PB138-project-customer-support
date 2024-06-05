@@ -55,23 +55,42 @@ const offerRepository = {
     },
 
     async readMany(cursorId: number | undefined, filter: OfferFilter) : DbResult<OfferExtendedDto[]> {
+        const filterObj = {
+            name: filter.name,
+            description: filter.description,
+            offerToProducts: filter.productIds === undefined ? undefined : {
+                some: {
+                    productId: {
+                        in: filter.productIds
+                    }
+                }
+            }
+        }
+
+        const includeObj = {
+            offerToProducts: {
+                where: filter.productIds === undefined ? undefined : {
+                    productId: {
+                        in: filter.productIds
+                    }
+                },
+                include: {
+                    product: {
+                        include: {
+                            categories: true,
+                        },
+                    },
+                },
+            },
+        }
+
         try {
             if (!cursorId) {
                 const offers = await prisma.offer.findMany({
                     take: READ_MANY_TAKE,
                     orderBy: { id: 'asc'},
-                    where: filter,
-                    include: {
-                        offerToProducts: {
-                            include: {
-                                product: {
-                                    include: {
-                                        categories: true,
-                                    },
-                                },
-                            },
-                        },
-                    },
+                    where: filterObj,
+                    include: includeObj
                 });
                 return Result.ok(offers.map(offer => offerModelToOfferExtendedDto(offer)));
             }
@@ -80,18 +99,8 @@ const offerRepository = {
                 cursor: { id: cursorId },
                 take: READ_MANY_TAKE,
                 orderBy: { id: 'asc'},
-                where: filter,
-                include: {
-                    offerToProducts: {
-                        include: {
-                            product: {
-                                include: {
-                                    categories: true,
-                                },
-                            },
-                        },
-                    },
-                },
+                where: filterObj,
+                include: includeObj
             });
             return Result.ok(offers.map(offer => offerModelToOfferExtendedDto(offer)));
         } catch (error) {
@@ -99,61 +108,15 @@ const offerRepository = {
         }
     },
 
-    async update(data: OfferUpdateDto): DbResult<OfferDto> {
+    async update(id: number, data: OfferUpdateDto): DbResult<OfferDto> {
         try {
-            const transactionResult = await prisma.$transaction(
-                async (transaction) => {
-                    const { id, name, description, offerToProducts } = data;
-                    if (offerToProducts) {
-                        offerToProducts.map(async (otp) => {
-                            const existing = await transaction.offerToProduct.findUnique({
-                                where: { id: otp.id },
-                            });
-
-                            if (existing) {
-                                await transaction.offerToProduct.update({
-                                    where: {
-                                        id: existing.id,
-                                    },
-                                    data: {
-                                        productId: otp.productId,
-                                        newPrice: otp.newPrice,
-                                        productQuantity: otp.productQuantity,
-                                    },
-                                });
-                            } else {
-                                await transaction.offerToProduct.create({
-                                    data: {
-                                        offerId: otp.offerId,
-                                        productId: otp.productId,
-                                        productQuantity: otp.productQuantity,
-                                        newPrice: otp.newPrice,
-                                    },
-                                });
-                            }
-                        });
-                    }
-                    const offer = transaction.offer.update({
-                        where: { id },
-                        data: {
-                            name,
-                            description,
-                        },
-                        include: {
-                            offerToProducts: {
-                                include: {
-                                    product: {
-                                        include: {
-                                            categories: true,
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    });
-                    return offer;
-                });
-            return Result.ok(offerModelToOfferDto(transactionResult));
+            const offer = await prisma.offer.update({
+                where: {
+                    id: id
+                },
+                data: data,
+            });
+            return Result.ok(offerModelToOfferDto(offer));
         } catch (error) {
             return handleRepositoryErrors(error);
         }

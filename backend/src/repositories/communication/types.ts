@@ -1,5 +1,5 @@
 import {BaseModelId} from "../types";
-import {UserDto} from "../user/types";
+import {UserInfoDto} from "../user/types";
 import {CustomerDto} from "../customer/types";
 
 export type ChatCommunicationDto = BaseModelId & {
@@ -14,9 +14,9 @@ export type ChatCommunicationCreateDto = Omit<ChatCommunicationDto, "id" | "time
     customerId: number
     userId: number
 };
-export type ChatCommunicationUpdateDto = Partial<ChatCommunicationCreateDto>
+export type ChatCommunicationUpdateDto = Partial<ChatCommunicationCreateDto & {timestamp: string}>
 export type ChatCommunicationExtendedDto = Omit<ChatCommunicationDto, "userId" | "customerId"> & {
-    user:                   UserDto
+    user:                   UserInfoDto
     customer:               CustomerDto
 }
 export type ChatCommunicationFilters = Partial<ChatCommunicationCreateDto>
@@ -24,7 +24,6 @@ export type ChatCommunicationFilters = Partial<ChatCommunicationCreateDto>
 
 
 export type VoiceCommunicationDto = BaseModelId & {
-    filePath:               string
     start:                  Date
     end:                    Date
     isUserStarted:          boolean
@@ -34,13 +33,14 @@ export type VoiceCommunicationDto = BaseModelId & {
 
 export type VoiceCommunicationCreateDto = Omit<VoiceCommunicationDto, "id">
     & {
+    filePath: string
     customerId: number
     userId: number
 };
 
 export type VoiceCommunicationUpdateDto = Partial<VoiceCommunicationCreateDto>
 export type VoiceCommunicationExtendedDto = Omit<VoiceCommunicationDto, "userId" | "customerId"> & {
-    user:                   UserDto
+    user:                   UserInfoDto
     customer:               CustomerDto
 }
-export type VoiceCommunicationFilters = Partial<VoiceCommunicationCreateDto>
+export type VoiceCommunicationFilters = Partial<Omit<VoiceCommunicationCreateDto, "filePath">>

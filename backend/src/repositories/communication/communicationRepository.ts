@@ -15,6 +15,7 @@ import {
     chatCommunicationModelToChatCommunicationExtendedDto, voiceCommunicationModelToVoiceCommunicationDto,
     voiceCommunicationModelToVoiceCommunicationExtendedDto
 } from "./mappers";
+import {unlink} from "node:fs/promises";
 
 export const chatCommunicationRepository = {
     async create (data: ChatCommunicationCreateDto): DbResult<ChatCommunicationDto> {
@@ -46,21 +47,7 @@ export const chatCommunicationRepository = {
     async update(id: number, data: ChatCommunicationUpdateDto): DbResult<ChatCommunicationDto> {
         try {
             const updatedChatCommunication = await prisma.chatCommunication.update({
-                data: {
-                    message: data.message,
-                    timestamp: new Date(),
-                    isUserSent: data.isUserSent,
-                    user: {
-                        connect: {
-                            id: data.userId,
-                        },
-                    },
-                    customer: {
-                        connect: {
-                            id: data.customerId,
-                        },
-                    },
-                },
+                data: data,
                 where : {
                     id: id
                 }
@@ -295,4 +282,35 @@ export const voiceCommunicationRepository = {
             return handleRepositoryErrors(error);
         }
     },
+
+    async getVoiceCommunicationAudioFilePath(id: number): DbResult<string> {
+        try {
+            const voiceCommunicationPathObj = await prisma.voiceCommunication.findFirstOrThrow({
+                where : {
+                    id: id
+                },
+                select: {
+                    filePath: true
+                }
+            });
+            return Result.ok(voiceCommunicationPathObj.filePath);
+        } catch (error) {
+            return handleRepositoryErrors(error);
+        }
+    },
+
+    async deleteVoiceCommunicationAudioFile(id: number): DbResult<boolean> {
+        const voiceCommunicationPathObj = await voiceCommunicationRepository.getVoiceCommunicationAudioFilePath(id);
+        if (voiceCommunicationPathObj.isErr) {
+            return handleRepositoryErrors(voiceCommunicationPathObj);
+        }
+
+        try {
+            await unlink(voiceCommunicationPathObj.value);
+        } catch (error) {
+            return handleRepositoryErrors(error);
+        }
+
+        return Result.ok(true);
+    }
 };
