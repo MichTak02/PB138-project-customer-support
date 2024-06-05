@@ -7,6 +7,10 @@ async function getAllCategories() {
   return BaseApi.getAll<Category[]>(CATEGORIES_PREFIX);
 }
 
+async function getCategory(id: number) {
+  return BaseApi.get<Category>(`${CATEGORIES_PREFIX}/${id}`)
+}
+
 async function createCategory(category: CategoryBasic) {
   return BaseApi.postSingle<Category>(CATEGORIES_PREFIX, category);
 }
@@ -24,6 +28,7 @@ const CategoriesApi = {
   createCategory,
   updateCategory,
   deleteCategory,
+  getCategory
 };
 
 export default CategoriesApi;
