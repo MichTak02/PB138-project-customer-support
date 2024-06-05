@@ -86,7 +86,7 @@ const deleteCategory = async (req: Request, res: Response) => {
         return handleControllerErrors(deletedCategoryResult.error, res);
     }
 
-    res.status(200).send({});
+    res.status(200).send(deletedCategoryResult.value);
 };
 
 export const categoryController = {
