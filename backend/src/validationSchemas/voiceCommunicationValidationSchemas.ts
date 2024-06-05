@@ -7,7 +7,6 @@ export const createVoiceCommunicationRequestSchema = z.object({
         isUserStarted: z.coerce.boolean(),
         customerId: z.coerce.number(),
         userId: z.coerce.number(),
-        file: z.object({}).passthrough()
     }),
 });
 
@@ -21,7 +20,6 @@ export const getVoiceCommunicationRequestSchema = z.object({
 export const getVoiceCommunicationsRequestSchema = z.object({
     query: z.object({
         cursor: z.coerce.number().optional(),
-        filePath: z.string().optional(),
         start: z.coerce.date().optional(),
         end: z.coerce.date().optional(),
         isUserStarted: z.coerce.boolean().optional(),
@@ -51,6 +49,6 @@ export const deleteVoiceCommunicationRequestSchema = z.object({
 
 export const getAudioFileRequestSchema = z.object({
     params: z.object({
-        path: z.string().min(1)
+        id: z.coerce.number()
     })
 })
