@@ -10,10 +10,12 @@ export enum RoleValues {
 export type UserDto = BaseModelId & {
     email:        string
     displayName:  string
-    passwordHash: string
     createdOn:    Date
     role:         Role
+    passwordHash: string
 }
+
+export type UserInfoDto = Omit<UserDto, "role" | "passwordHash" | "createdOn">
 
 export type UserCreateDto = Omit<UserDto, "id" | "createdOn">;
 export type UserUpdateDto = Partial<Omit<UserCreateDto, "email">>
