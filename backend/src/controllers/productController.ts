@@ -86,7 +86,7 @@ const deleteProduct = async (req: Request, res: Response) => {
         return handleControllerErrors(deletedProductResult.error, res);
     }
 
-    res.status(200).send({});
+    res.status(200).send(deletedProductResult.value);
 };
 
 export const productController = {
