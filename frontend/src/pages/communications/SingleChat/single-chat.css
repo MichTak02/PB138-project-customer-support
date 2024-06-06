@@ -27,3 +27,9 @@
     margin: 0;
     color: darkgray;
 }
+
+.chat-text-field {
+    position: sticky;
+    bottom: 0;
+    width: auto;
+}

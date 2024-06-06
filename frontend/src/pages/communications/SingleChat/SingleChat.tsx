@@ -1,5 +1,7 @@
-import {ChatMessage} from "../../../components/ChatMessage/ChatMessage.tsx";
+import TextField from "@mui/material/TextField";
+import {ChatMessage} from "../../../components/Communication/ChatMessage/ChatMessage.tsx";
 import "./single-chat.css"
+import { SendMessage } from "../../../components/Communication/SendMessage/SendMessage.tsx";
 
 interface Participants {
     senderId: number;
@@ -110,6 +112,7 @@ export const SingleChat = (props: { participants: Participants }) => {
                 <div className="chat-heading__email">{customerEmail}</div>
             </div>
             {messages.map((message) => <ChatMessage message={message}></ChatMessage>)}
+            <SendMessage></SendMessage>
         </div>
     );
 }
