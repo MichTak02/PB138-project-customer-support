@@ -1,10 +1,5 @@
-//import { Product, Category } from "@prisma/client";
 import { BaseModelId } from "./base";
 import { CategoryDto } from "./category";
-
-/*export type ProductWithCategories = Product & {
-    categories: Category[],
-}*/
 
 export type Type = "PRODUCT" | "SERVICE";
 export enum TypeValues {
