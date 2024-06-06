@@ -1,10 +1,10 @@
 import BaseApi from './baseApi';
-import { ProductDto, ProductCreateDto, ProductUpdateDto, ProductFilters, ProductExtendedDto } from '../models/product';
+import { ProductCreateDto, ProductUpdateDto, ProductFilters, ProductExtendedDto } from '../models/product';
 
 const PRODUCTS_PREFIX = '/products';
 
-async function getAllProducts(page?: number, filter?: ProductFilters) {
-  const params = page ? { page, ...filter } : { ...filter };
+async function getAllProducts(cursor?: number, filter?: ProductFilters) {
+  const params = cursor ? { cursor: cursor, ...filter } : { ...filter };
   return BaseApi.getAll<ProductExtendedDto[]>(PRODUCTS_PREFIX, { params });
 }
 

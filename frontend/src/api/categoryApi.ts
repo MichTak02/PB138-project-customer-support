@@ -3,8 +3,8 @@ import { CategoryDto, CategoryCreateDto, CategoryUpdateDto, CategoryFilters } fr
 
 const CATEGORIES_PREFIX = '/categories';
 
-async function getAllCategories(page?: number, filter?: CategoryFilters) {
-  const params = page ? { page, ...filter } : { ...filter };
+async function getAllCategories(cursor?: number, filter?: CategoryFilters) {
+  const params = cursor ? { cursor: cursor, ...filter } : { ...filter };
   return BaseApi.getAll<CategoryDto[]>(CATEGORIES_PREFIX, { params });
 }
 
