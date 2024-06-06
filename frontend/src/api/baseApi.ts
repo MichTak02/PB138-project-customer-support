@@ -1,4 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
+import {
+  ApiRespSingle
+} from "../models/response";
 
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:6481',
@@ -24,10 +27,12 @@ async function putSingle<T>(path: string, payload: unknown): Promise<T> {
   return response.data;
 }
 
-async function deleteSingle<T>(path: string): Promise<T> {
-  const response = await axiosInstance.delete<T>(path);
-  return response.data;
+async function deleteSingle<T>(path: string) {
+  const resp = await axiosInstance.delete<ApiRespSingle<T>>(path);
+  return resp.data;
 }
+
+
 
 const BaseApi = {
   getAll,

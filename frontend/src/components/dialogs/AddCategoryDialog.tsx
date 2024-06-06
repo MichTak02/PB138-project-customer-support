@@ -8,11 +8,11 @@ interface AddCategoryDialogProps {
 }
 
 const AddCategoryDialog: React.FC<AddCategoryDialogProps> = ({ open, onClose, onAddCategory }) => {
-  const [categoryName, setCategoryName] = useState('');
+  const [name, setName] = useState('');
 
   const handleAddCategory = () => {
-    onAddCategory(categoryName);
-    setCategoryName('');
+    onAddCategory(name);
+    setName('');
     onClose();
   };
 
@@ -23,11 +23,11 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = ({ open, onClose, on
         <TextField
           autoFocus
           margin="dense"
-          label="Category Name"
+          label="Name"
           type="text"
           fullWidth
-          value={categoryName}
-          onChange={(e) => setCategoryName(e.target.value)}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
       </DialogContent>
       <DialogActions>

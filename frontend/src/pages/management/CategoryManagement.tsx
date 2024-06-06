@@ -3,19 +3,20 @@ import Page from '../../components/base/Page';
 import { Typography, Button } from '@mui/material';
 import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
 import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from '../../hooks/useCategories';
-import { Category } from '../../models/category';
+import { CategoryDto } from '../../models/category';
 import AddCategoryDialog from '../../components/dialogs/AddCategoryDialog';
 import EditCategoryDialog from '../../components/dialogs/EditCategoryDialog';
 
 const CategoryManagement: React.FC = () => {
-  const { data: categories, isLoading, error } = useCategories();
+  const [cursorId, setCursorId] = useState<number | undefined>(undefined);
+  const { data: categories, isLoading, error } = useCategories(cursorId);
   const createCategoryMutation = useCreateCategory();
   const updateCategoryMutation = useUpdateCategory();
   const deleteCategoryMutation = useDeleteCategory();
 
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
+  const [currentCategory, setCurrentCategory] = useState<CategoryDto | null>(null);
 
   const handleAddCategory = (name: string) => {
     createCategoryMutation.mutate({ name });
@@ -27,6 +28,13 @@ const CategoryManagement: React.FC = () => {
 
   const handleDeleteCategory = (id: number) => {
     deleteCategoryMutation.mutate(id);
+  };
+
+  const handleShowMore = () => {
+    if (categories && categories.length > 0) {
+      const lastCategory = categories[categories.length - 1];
+      setCursorId(lastCategory.id);
+    }
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -54,7 +62,7 @@ const CategoryManagement: React.FC = () => {
                 variant="contained"
                 color="secondary"
                 onClick={() => {
-                  setCurrentCategory(params.row as Category);
+                  setCurrentCategory(params.row as CategoryDto);
                   setIsEditDialogOpen(true);
                 }}
               >
@@ -70,7 +78,7 @@ const CategoryManagement: React.FC = () => {
               <Button
                 variant="contained"
                 color="error"
-                onClick={() => handleDeleteCategory((params.row as Category).id)}
+                onClick={() => handleDeleteCategory((params.row as CategoryDto).id)}
               >
                 Delete
               </Button>
@@ -79,6 +87,9 @@ const CategoryManagement: React.FC = () => {
         ]}
         disableRowSelectionOnClick
       />
+      <Button variant="contained" color="primary" onClick={handleShowMore}>
+        Show More
+      </Button>
 
       <AddCategoryDialog
         open={isCreateDialogOpen}

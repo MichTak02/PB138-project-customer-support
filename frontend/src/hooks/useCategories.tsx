@@ -1,11 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import CategoriesApi from '../api/categoryApi';
-import { Category, CategoryBasic } from '../models/category';
+import { CategoryDto, CategoryCreateDto, CategoryUpdateDto, CategoryFilters } from '../models/category';
 
-export const useCategories = () => {
-  return useQuery<Category[]>({
-    queryKey: ['categories'],
-    queryFn: CategoriesApi.getAllCategories,
+export const useCategories = (cursorId?: number, filter?: CategoryFilters) => {
+  return useQuery<CategoryDto[]>({
+    queryKey: ['categories', cursorId, filter],
+    queryFn: () => CategoriesApi.getAllCategories(cursorId, filter),
+  });
+};
+
+export const useCategory = (id: number) => {
+  return useQuery<CategoryDto>({
+    queryKey: ['category', id],
+    queryFn: () => CategoriesApi.getCategory(id),
   });
 };
 
@@ -22,7 +29,7 @@ export const useCreateCategory = () => {
 export const useUpdateCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, category }: { id: number; category: CategoryBasic }) =>
+    mutationFn: ({ id, category }: { id: number; category: CategoryUpdateDto }) =>
       CategoriesApi.updateCategory(id, category),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });

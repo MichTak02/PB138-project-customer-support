@@ -1,3 +1,3 @@
 export type BaseModelId = {
-  id: number; // Změna na number
+  id: number;
 };

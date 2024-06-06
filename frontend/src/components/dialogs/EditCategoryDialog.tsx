@@ -1,27 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField } from '@mui/material';
-import { Category } from '../../models/category';
+import { CategoryDto } from '../../models/category';
 
 interface EditCategoryDialogProps {
   open: boolean;
   onClose: () => void;
   onEditCategory: (id: number, name: string) => void;
-  category: Category | null;
+  category: CategoryDto | null;
 }
 
 const EditCategoryDialog: React.FC<EditCategoryDialogProps> = ({ open, onClose, onEditCategory, category }) => {
-  const [categoryName, setCategoryName] = useState('');
+  const [name, setName] = useState('');
 
   useEffect(() => {
     if (category) {
-      setCategoryName(category.name);
+      setName(category.name);
     }
   }, [category]);
 
   const handleEditCategory = () => {
     if (category) {
-      onEditCategory(category.id, categoryName);
-      setCategoryName('');
+      onEditCategory(category.id, name);
+      setName('');
       onClose();
     }
   };
@@ -33,11 +33,11 @@ const EditCategoryDialog: React.FC<EditCategoryDialogProps> = ({ open, onClose, 
         <TextField
           autoFocus
           margin="dense"
-          label="Category Name"
+          label="Name"
           type="text"
           fullWidth
-          value={categoryName}
-          onChange={(e) => setCategoryName(e.target.value)}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
       </DialogContent>
       <DialogActions>

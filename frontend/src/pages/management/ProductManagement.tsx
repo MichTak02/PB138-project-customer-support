@@ -1,27 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Page from '../../components/base/Page';
 import { Typography, Button } from '@mui/material';
 import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
 import { useProducts, useCreateProduct, useUpdateProduct, useDeleteProduct } from '../../hooks/useProducts';
-import { Product } from '../../models/product';
+import { ProductCreateDto, ProductExtendedDto, ProductUpdateDto } from '../../models/product';
 import AddProductDialog from '../../components/dialogs/AddProductDialog';
 import EditProductDialog from '../../components/dialogs/EditProductDialog';
 
 const ProductManagement: React.FC = () => {
-  const { data: products, isLoading, error } = useProducts();
+  const [cursorId, setCursorId] = useState<number | undefined>(undefined);
+  const { data: products, isLoading, error } = useProducts(cursorId);
   const createProductMutation = useCreateProduct();
   const updateProductMutation = useUpdateProduct();
   const deleteProductMutation = useDeleteProduct();
 
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
+  const [currentProduct, setCurrentProduct] = useState<ProductExtendedDto | null>(null);
 
-  const handleAddProduct = (product: { name: string; description: string; price: number; type: string }) => {
+  const handleAddProduct = (product: ProductCreateDto) => {
     createProductMutation.mutate(product);
   };
 
-  const handleEditProduct = (id: number, product: { name: string; description: string; price: number; type: string }) => {
+  const handleEditProduct = (id: number, product: ProductUpdateDto) => {
     updateProductMutation.mutate({ id, product });
   };
 
@@ -29,7 +30,14 @@ const ProductManagement: React.FC = () => {
     deleteProductMutation.mutate(id);
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  const handleShowMore = () => {
+    if (products && products.length > 0) {
+      const lastProduct = products[products.length - 1];
+      setCursorId(lastProduct.id);
+    }
+  };
+
+  if (isLoading && cursorId === undefined) return <div>Loading...</div>;
   if (error) return <div>Error loading products</div>;
 
   return (
@@ -47,18 +55,11 @@ const ProductManagement: React.FC = () => {
           { field: 'name', headerName: 'Name', width: 200 },
           { field: 'description', headerName: 'Description', width: 400 },
           { field: 'price', headerName: 'Price', width: 100 },
-          { field: 'type', headerName: 'Type', width: 150 },
+          { field: 'type', headerName: 'Type', width: 100 },
           {
             field: 'categories',
             headerName: 'Categories',
             width: 200,
-            renderCell: (params: GridRenderCellParams) => (
-              <div>
-                {(params.row as Product).categories.map((category) => (
-                  <span key={category.id}>{category.name} </span>
-                ))}
-              </div>
-            ),
           },
           {
             field: 'edit',
@@ -69,7 +70,7 @@ const ProductManagement: React.FC = () => {
                 variant="contained"
                 color="secondary"
                 onClick={() => {
-                  setCurrentProduct(params.row as Product);
+                  setCurrentProduct(params.row as ProductExtendedDto);
                   setIsEditDialogOpen(true);
                 }}
               >
@@ -85,7 +86,7 @@ const ProductManagement: React.FC = () => {
               <Button
                 variant="contained"
                 color="error"
-                onClick={() => handleDeleteProduct((params.row as Product).id)}
+                onClick={() => handleDeleteProduct((params.row as ProductExtendedDto).id)}
               >
                 Delete
               </Button>
@@ -94,6 +95,9 @@ const ProductManagement: React.FC = () => {
         ]}
         disableRowSelectionOnClick
       />
+      <Button variant="contained" color="primary" onClick={handleShowMore}>
+        Show More
+      </Button>
 
       <AddProductDialog
         open={isCreateDialogOpen}

@@ -1,11 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import ProductsApi from '../api/productApi';
-import { Product, ProductBasic } from '../models/product';
+import { ProductExtendedDto, ProductCreateDto, ProductUpdateDto, ProductFilters } from '../models/product';
 
-export const useProducts = () => {
-  return useQuery<Product[]>({
-    queryKey: ['products'],
-    queryFn: ProductsApi.getAllProducts,
+export const useProducts = (cursorId?: number, filter?: ProductFilters) => {
+  return useQuery<ProductExtendedDto[]>({
+    queryKey: ['products', cursorId, filter],
+    queryFn: () => ProductsApi.getAllProducts(cursorId, filter),
+  });
+};
+
+export const useProduct = (id: number) => {
+  return useQuery<ProductExtendedDto>({
+    queryKey: ['product', id],
+    queryFn: () => ProductsApi.getProduct(id),
   });
 };
 
@@ -22,7 +29,7 @@ export const useCreateProduct = () => {
 export const useUpdateProduct = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, product }: { id: number; product: ProductBasic }) =>
+    mutationFn: ({ id, product }: { id: number; product: ProductUpdateDto }) =>
       ProductsApi.updateProduct(id, product),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
