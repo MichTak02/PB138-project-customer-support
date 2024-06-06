@@ -44,9 +44,9 @@ const getCategories = async (req: Request, res: Response) => {
         return;
     }
 
-    const { page, ...filter } = request.query;
+    const { cursor, ...filter } = request.query;
 
-    const categoriesResult = await categoryRepository.readMany(page, filter);
+    const categoriesResult = await categoryRepository.readMany(cursor, filter);
     if (categoriesResult.isErr) {
         return handleControllerErrors(categoriesResult.error, res);
     }
