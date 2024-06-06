@@ -1,0 +1,29 @@
+.single-chat {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem;
+    background-color: white;
+    overflow: visible;
+}
+
+.chat-heading {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    width: auto;
+    border-bottom: solid black 1px;
+    padding-left: 1rem;
+}
+
+.chat-heading__name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+    color: black;
+}
+
+.chat-heading__email {
+    font-size: 1rem;
+    margin: 0;
+    color: darkgray;
+}
