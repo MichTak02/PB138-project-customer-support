@@ -1,5 +1,5 @@
 import "./chat-message.css"
-import "../../index.css"
+import "../../../index.css"
 
 interface Message {
     text: string;
