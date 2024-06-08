@@ -3,7 +3,7 @@ import { RoleValues } from '../src/repositories/user/types'
 import {TypeValues} from "../src/repositories/product/types";
 import {createPasswordHash} from "../src/utils/userUtils";
 
-export const ENTRY_COUNT = 10;
+export const ENTRY_COUNT = 150;
 
 export const userDataPromise = createPasswordHash("1234").then((h) => {
     return Array.from({length: ENTRY_COUNT}).map(() => ({

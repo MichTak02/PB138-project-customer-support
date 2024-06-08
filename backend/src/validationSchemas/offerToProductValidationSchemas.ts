@@ -18,7 +18,7 @@ export const getOfferToProductRequestSchema = z.object({
 
 export const getOffersToProductsRequestSchema = z.object({
     query: z.object({
-        page: z.coerce.number().optional().optional(),
+        cursor: z.coerce.number().optional().optional(),
         id: z.coerce.number().optional(),
         offerId: z.coerce.number().optional(),
         productId: z.coerce.number().optional(),

@@ -44,9 +44,9 @@ const getOffers = async (req: Request, res: Response) => {
         return;
     }
 
-    const { page, ...filter } = request.query;
+    const { cursor, ...filter } = request.query;
 
-    const offersResult = await offerRepository.readMany(page, filter);
+    const offersResult = await offerRepository.readMany(cursor, filter);
     if (offersResult.isErr) {
         return handleControllerErrors(offersResult.error, res);
     }

@@ -1,7 +1,7 @@
-export interface ApiRespMulti<T> {
-  [x: string]: any;
-  data: T[];
-}
+export type ApiRespMulti<T> = {
+  items: T[];
+  message?: string;
+};
   
   export type ApiRespMultiPaginated<T> = ApiRespMulti<T> & {
     pagination: Pagination;

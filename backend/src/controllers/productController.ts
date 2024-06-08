@@ -44,9 +44,9 @@ const getProducts = async (req: Request, res: Response) => {
         return;
     }
 
-    const { page, ...filter } = request.query;
+    const { cursor, ...filter } = request.query;
 
-    const productsResult = await productRepository.readMany(page, filter);
+    const productsResult = await productRepository.readMany(cursor, filter);
     if (productsResult.isErr) {
         return handleControllerErrors(productsResult.error, res);
     }
