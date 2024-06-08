@@ -13,7 +13,7 @@ class ApiService<TDto, TExtendedDto, TCreateDto, TUpdateDto, TFilters> {
         });
     }
 
-    private jsonToUrlQueryParams(obj: any) {
+    private jsonToUrlQueryParams = (obj: any) => {
         let result = "?";
         const entries = Object.entries(obj);
 
@@ -33,31 +33,31 @@ class ApiService<TDto, TExtendedDto, TCreateDto, TUpdateDto, TFilters> {
             }
         }
 
-        return result
+        return result;
     }
 
-    public async getMany(cursor?: number, filters?: TFilters): Promise<TDto[]> {
-        const path = this.jsonToUrlQueryParams({cursor: cursor, ...filters});
+    public getMany = async (cursor?: number, filters?: TFilters): Promise<TDto[]> => {
+        const path = this.jsonToUrlQueryParams({ cursor: cursor, ...filters });
         const response = await this.axiosInstance.get<TDto[]>(`${this.endpoint}/${path}`);
         return response.data;
     }
 
-    public async get(id: number): Promise<TExtendedDto> {
+    public get = async (id: number): Promise<TExtendedDto> => {
         const response = await this.axiosInstance.get<TExtendedDto>(`${this.endpoint}/${id}`);
         return response.data;
     }
 
-    public async create(data: TCreateDto): Promise<TDto> {
+    public create = async (data: TCreateDto): Promise<TDto> => {
         const response = await this.axiosInstance.post<TDto>(this.endpoint, data);
         return response.data;
     }
 
-    public async update(id: number, data: TUpdateDto): Promise<TDto> {
+    public update = async (id: number, data: TUpdateDto): Promise<TDto> => {
         const response = await this.axiosInstance.put<TDto>(`${this.endpoint}/${id}`, data);
         return response.data;
     }
 
-    public async delete(id: number): Promise<TDto> {
+    public delete = async (id: number): Promise<TDto> => {
         const response = await this.axiosInstance.delete<TDto>(`${this.endpoint}/${id}`);
         return response.data;
     }
