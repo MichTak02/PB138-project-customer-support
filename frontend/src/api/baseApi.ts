@@ -13,8 +13,8 @@ async function getAll<T>(path: string, config?: AxiosRequestConfig): Promise<T> 
   return response.data;
 }
 
-async function get<T>(path: string) {
-  const response = await axiosInstance.get<T>(path);
+async function get<T>(path: string, config?: AxiosRequestConfig) {
+  const response = await axiosInstance.get<T>(path, config);
   return response.data;
 }
 
