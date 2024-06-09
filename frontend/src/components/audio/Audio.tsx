@@ -8,8 +8,12 @@ type AudioProps = {
 const Audio = (props: AudioProps) => {
     const { data: audioUrl, error, isLoading } = useAudioFile(props.id)
 
-    if (isLoading) return <CircularProgress />;
-    if (error) return <Typography color="error">Error loading audio file</Typography>;;
+    if (isLoading) {
+        return <CircularProgress />;
+    }
+    if (error) {
+        return <Typography color="error">Error loading audio file</Typography>;
+    }
 
     return (
         <Card>
