@@ -1,4 +1,3 @@
-import TextField from "@mui/material/TextField";
 import {ChatMessage} from "../../../components/Communication/ChatMessage/ChatMessage.tsx";
 import "./single-chat.css"
 import { SendMessage } from "../../../components/Communication/SendMessage/SendMessage.tsx";
