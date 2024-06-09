@@ -5,7 +5,7 @@ import {
 import {
     useCategories, useCategory,
     useCreateCategory, useDeleteCategory, useUpdateCategory/*, useCreateCategory, useUpdateCategory, useDeleteCategory*/
-} from '../../hooks/useCategories';
+} from '../../hooks/useCategories.ts';
 import Page from "../../components/base/Page.tsx";
 import {Typography} from "@mui/material";
 import CursorPaginatedDataGrid from "../../components/dataDisplay/CursorPaginatedDataGrid.tsx";
