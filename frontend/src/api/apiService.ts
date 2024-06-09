@@ -1,4 +1,5 @@
-import axios, { AxiosInstance } from 'axios';
+import { AxiosInstance } from "axios";
+import {axiosInstance} from "./baseApi.ts";
 
 // the amount of entities the API returns
 export const GET_MANY_SIZE = 20;
@@ -8,10 +9,7 @@ class ApiService<TDto, TExtendedDto, TCreateDto, TUpdateDto, TFilters> {
 
     constructor(endpoint: string) {
         this.endpoint = endpoint;
-        this.axiosInstance = axios.create({
-            baseURL: import.meta.env.VITE_API_URL,
-            withCredentials: true
-        });
+        this.axiosInstance = axiosInstance
     }
 
     private jsonToUrlQueryParams = (obj: any) => {

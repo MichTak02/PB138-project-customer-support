@@ -38,7 +38,7 @@ const register = async (req: Request, res: Response) => {
         return;
     }
 
-    res.status(201).end();
+    res.status(204).end();
 };
 
 const login = async (req: Request, res: Response) => {

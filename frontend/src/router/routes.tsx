@@ -31,7 +31,7 @@ const customerManagementRoutes: RouteObject[] = [
 const mainLayoutRoutes: RouteObject[] = [
     {
         index: true,
-        element: <Navigate to="dashboard" replace/>,
+        element: <Navigate to="dashboard" replace={true}/>,
     },
     {
         path: 'dashboard',
