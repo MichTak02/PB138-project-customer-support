@@ -5,6 +5,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {LoginDto} from "../models/auth.ts";
 import {loginSchema} from "../validationSchemas/forms.ts";
 import useLogin from "../hooks/useLogin.ts";
+import {useNavigate} from "react-router-dom";
 
 export function Login() {
     const {
@@ -13,6 +14,7 @@ export function Login() {
         resolver: zodResolver(loginSchema),
     });
     const { login, isPending, isError } = useLogin({ redirect: "/auth/dashboard" });
+    const navigate = useNavigate();
 
     const onSubmit = async (data: LoginDto) => {
         await login(data);
@@ -46,11 +48,15 @@ export function Login() {
                     required
                     margin="normal"
                 />
-                <Button onClick={handleSubmit(onSubmit)} type="submit" variant="contained" color="primary" fullWidth sx={{mt: 2}}>
+                <Button type="submit" variant="contained" color="primary" fullWidth sx={{mt: 2}}>
                     Log In
                 </Button>
+
                 {isError && <Typography color="error" sx={{ mt: 2 }}>Login failed. Please try again.</Typography>}
             </Box>
+            <Typography color="blue" sx={{ mt: 2 }} onClick={() => navigate("/register")}>
+                Don't have an account? Click here to register!
+            </Typography>
         </Page>
     );
 }
