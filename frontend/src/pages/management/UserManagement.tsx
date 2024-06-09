@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Page from '../../components/base/Page';
 import { Typography, Button } from '@mui/material';
 import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
-import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from '../../hooks/useUsers';
+import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from '../../hooks/useUsers.ts';
 import { User } from '../../models/user';
 import AddUserDialog from '../../components/dialogs/AddUserDialog';
 import EditUserDialog from '../../components/dialogs/EditUserDialog';

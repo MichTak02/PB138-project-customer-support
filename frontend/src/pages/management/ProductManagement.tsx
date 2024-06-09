@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Page from '../../components/base/Page';
 import { Typography, Button } from '@mui/material';
 import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
-import { useProducts, useCreateProduct, useUpdateProduct, useDeleteProduct } from '../../hooks/useProducts';
+import { useProducts, useCreateProduct, useUpdateProduct, useDeleteProduct } from '../../hooks/useProducts.ts';
 import { ProductCreateDto, ProductExtendedDto, ProductUpdateDto } from '../../models/product';
 import AddProductDialog from '../../components/dialogs/AddProductDialog';
 import EditProductDialog from '../../components/dialogs/EditProductDialog';
