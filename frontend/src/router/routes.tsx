@@ -13,9 +13,9 @@ import ProductManagement from '../pages/management/ProductManagement';
 import CategoryManagement from '../pages/management/CategoryManagement';
 import OfferManagement from '../pages/management/OfferManagement';
 import NotFound from '../pages/errors/NotFound';
-import PrivateRoute from "../components/routing/PrivateRoute.tsx";
+import PrivateRoute from "../components/auth/PrivateRoute.tsx";
 import {RoleValues} from "../models/user.ts";
-import RootRoute from "../components/routing/RootRoute.tsx";
+import RootRoute from "../components/auth/RootRoute.tsx";
 
 const customerManagementRoutes: RouteObject[] = [
     {
