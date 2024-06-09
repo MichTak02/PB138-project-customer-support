@@ -11,3 +11,10 @@ export type AuthDto = {
     displayName: string;
     role: Role;
 }
+
+export type RegisterDto = {
+    displayName: string,
+    email: string,
+    password: string,
+    confirmPassword: string,
+}
