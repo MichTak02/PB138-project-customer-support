@@ -13,4 +13,4 @@ export type OfferExtendedDto = OfferDto & {
   offerToProducts: OfferToProductExtendedDto[],
 }
 
-export type OfferFilter = Partial<Omit<OfferCreateDto, "offerToProducts">& { productIds: number[] }>;
+export type OfferFilters = Partial<Omit<OfferCreateDto, "offerToProducts">& { productIds: number[] }>;

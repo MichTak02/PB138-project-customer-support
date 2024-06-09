@@ -16,4 +16,4 @@ export type OfferToProductExtendedDto = Omit<OfferToProductDto, "productId"> & {
     product: ProductExtendedDto,
 }
 
-export type OfferToProductFilter = Partial<OfferToProductCreateDto>
+export type OfferToProductFilters = Partial<OfferToProductCreateDto>
