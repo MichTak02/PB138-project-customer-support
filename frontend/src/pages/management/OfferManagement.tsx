@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Page from '../../components/base/Page';
 import { Typography, Button } from '@mui/material';
 import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
-import { useOffers, useCreateOffer, useUpdateOffer, useDeleteOffer } from '../../hooks/useOffers';
+import { useOffers, useCreateOffer, useUpdateOffer, useDeleteOffer } from '../../hooks/useOffers.ts';
 import { Offer } from '../../models/offer';
 import AddOfferDialog from '../../components/dialogs/AddOfferDialog';
 import EditOfferDialog from '../../components/dialogs/EditOfferDialog';

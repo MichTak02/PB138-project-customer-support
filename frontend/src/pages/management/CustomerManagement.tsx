@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Page from '../../components/base/Page';
 import { Typography, Button } from '@mui/material';
 import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
-import { useCustomers, useCreateCustomer, useUpdateCustomer, useDeleteCustomer } from '../../hooks/useCustomers';
+import { useCustomers, useCreateCustomer, useUpdateCustomer, useDeleteCustomer } from '../../hooks/useCustomers.ts';
 import { Customer } from '../../models/customer';
 import AddCustomerDialog from '../../components/dialogs/AddCustomerDialog';
 import EditCustomerDialog from '../../components/dialogs/EditCustomerDialog';
