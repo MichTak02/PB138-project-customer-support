@@ -1,0 +1,30 @@
+.voice-record {
+    border-radius: 10px;
+    color: black;
+    background-color: lightblue;
+    padding: 1rem;
+    font-size: 1.2rem;
+    margin: 1rem;
+}
+
+.voice-record--received {
+    margin-left: auto;
+    background-color: var(--light-gray);
+    color: black;
+}
+
+.voice-record--sent {
+    margin-right: auto;
+    background-color: var(--blue);
+    color: white;
+}
+
+.voice-record__description {
+    margin-bottom: 1rem;
+}
+
+.voice-record__heading {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
