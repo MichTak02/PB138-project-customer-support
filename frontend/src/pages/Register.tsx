@@ -1,92 +1,84 @@
-import React, { useState } from 'react';
 import Page from '../components/base/Page';
-import { Typography, TextField, Button, Box, Alert } from '@mui/material';
+import {Typography, TextField, Button, Box} from '@mui/material';
+import {useForm} from "react-hook-form";
+import {RegisterDto} from "../models/auth.ts";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {registerSchema} from "../validationSchemas/forms.ts";
+import {useNavigate} from "react-router-dom";
+import useRegister from "../hooks/useRegister.ts";
+
 
 export function Register() {
-  const [email, setEmail] = useState('');
-  const [displayName, setDisplayName] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+    const {
+        handleSubmit, formState: {errors}, register
+    } = useForm<RegisterDto>({
+        resolver: zodResolver(registerSchema),
+    });
+    const navigate = useNavigate();
+    const { mutateAsync: registerFunc, isError } = useRegister();
 
-  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(event.target.value);
-  };
+    const onSubmit = async (data: RegisterDto) => {
+        await registerFunc(data);
+        navigate("/login")
+    };
 
-  const handleDisplayNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDisplayName(event.target.value);
-  };
+    return (
+        <Page title="Register">
+            <Typography component="p" variant="h5">
+                Please register to continue.
+            </Typography>
+            <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{mt: 2}}>
+                <TextField
+                    label="Email"
+                    type="email"
+                    fullWidth
+                    required
+                    margin="normal"
 
-  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value);
-  };
+                    {...register("email")}
+                    error={typeof errors.email !== 'undefined'}
+                    helperText={errors.email?.message}
+                />
+                <TextField
+                    label="Display Name"
+                    type="text"
+                    fullWidth
+                    required
+                    margin="normal"
 
-  const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setConfirmPassword(event.target.value);
-  };
+                    {...register("displayName")}
+                    error={typeof errors.displayName !== 'undefined'}
+                    helperText={errors.displayName?.message}
+                />
+                <TextField
+                    label="Password"
+                    type="password"
+                    fullWidth
+                    required
+                    margin="normal"
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-    // Add registration logic here
-    console.log('Email:', email);
-    console.log('Display Name:', displayName);
-    console.log('Password:', password);
-    setError('');
-  };
+                    {...register("password")}
+                    error={typeof errors.password !== 'undefined'}
+                    helperText={errors.password?.message}
+                />
+                <TextField
+                    label="Confirm Password"
+                    type="password"
+                    fullWidth
+                    required
+                    margin="normal"
 
-  return (
-    <Page title="Register">
-      <Typography component="p" variant="h5">
-        Please register to continue.
-      </Typography>
-      <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
-        {error && <Alert severity="error">{error}</Alert>}
-        <TextField
-          label="Email"
-          type="email"
-          fullWidth
-          required
-          margin="normal"
-          value={email}
-          onChange={handleEmailChange}
-        />
-        <TextField
-          label="Display Name"
-          type="text"
-          fullWidth
-          required
-          margin="normal"
-          value={displayName}
-          onChange={handleDisplayNameChange}
-        />
-        <TextField
-          label="Password"
-          type="password"
-          fullWidth
-          required
-          margin="normal"
-          value={password}
-          onChange={handlePasswordChange}
-        />
-        <TextField
-          label="Confirm Password"
-          type="password"
-          fullWidth
-          required
-          margin="normal"
-          value={confirmPassword}
-          onChange={handleConfirmPasswordChange}
-        />
-        <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
-          Register
-        </Button>
-      </Box>
-    </Page>
-  );
+                    {...register("confirmPassword")}
+                    error={typeof errors.confirmPassword !== 'undefined'}
+                    helperText={errors.confirmPassword?.message}
+                />
+                <Button type="submit" variant="contained" color="primary" fullWidth sx={{mt: 2}}>
+                    Register
+                </Button>
+            </Box>
+            {isError && <Typography color="error" sx={{ mt: 2 }}>Registration failed. Please try again.</Typography>}
+        </Page>
+    );
 }
 
 export default Register;
