@@ -1,5 +1,4 @@
-import React from 'react';
-import { Navigate, RouteObject } from 'react-router-dom';
+import {Navigate, RouteObject} from 'react-router-dom';
 
 import MainLayout from '../layouts/MainLayout';
 import CustomerLayout from '../layouts/CustomerLayout';
@@ -14,74 +13,86 @@ import ProductManagement from '../pages/management/ProductManagement';
 import CategoryManagement from '../pages/management/CategoryManagement';
 import OfferManagement from '../pages/management/OfferManagement';
 import NotFound from '../pages/errors/NotFound';
+import PrivateRoute from "../components/routing/PrivateRoute.tsx";
+import {RoleValues} from "../models/user.ts";
+import RootRoute from "../components/routing/RootRoute.tsx";
 
 const customerManagementRoutes: RouteObject[] = [
-  {
-    path: 'voice',
-    Component: VoiceCommunications,
-  },
-  {
-    path: 'chat',
-    Component: ChatCommunications,
-  },
+    {
+        path: 'voice',
+        Component: VoiceCommunications,
+    },
+    {
+        path: 'chat',
+        Component: ChatCommunications,
+    },
 ];
 
 const mainLayoutRoutes: RouteObject[] = [
-  {
-    index: true,
-    element: <Navigate to="/dashboard" replace />,
-  },
-  {
-    path: 'dashboard',
-    Component: Dashboard,
-  },
-  {
-    path: 'login',
-    Component: Login,
-  },
-  {
-    path: 'register',
-    Component: Register,
-  },
-  {
-    path: 'users',
-    Component: UserManagement,
-  },
-  {
-    path: 'customers',
-    Component: CustomerLayout,
-    children: [
-      {
+    {
         index: true,
-        Component: CustomerManagement,
-      },
-      ...customerManagementRoutes,
-    ],
-  },
-  {
-    path: 'products',
-    Component: ProductManagement,
-  },
-  {
-    path: 'categories',
-    Component: CategoryManagement,
-  },
-  {
-    path: 'offers',
-    Component: OfferManagement,
-  },
+        element: <Navigate to="dashboard" replace/>,
+    },
+    {
+        path: 'dashboard',
+        Component: Dashboard,
+    },
+    {
+        path: 'users',
+        Component: UserManagement,
+    },
+    {
+        path: 'customers',
+        Component: CustomerLayout,
+        children: [
+            {
+                index: true,
+                Component: CustomerManagement,
+            },
+            ...customerManagementRoutes,
+        ],
+    },
+    {
+        path: 'products',
+        Component: ProductManagement,
+    },
+    {
+        path: 'categories',
+        Component: CategoryManagement,
+    },
+    {
+        path: 'offers',
+        Component: OfferManagement,
+    },
 ];
 
 const routes: RouteObject[] = [
-  {
-    path: '/',
-    Component: MainLayout,
-    children: mainLayoutRoutes,
-  },
-  {
-    path: '*',
-    Component: NotFound,
-  },
+    {
+        path: '/',
+        Component: RootRoute,
+    },
+    {
+        path: '/register',
+        Component: Register,
+    },
+    {
+        path: '/login',
+        Component: Login
+    },
+    {
+        path: '/auth',
+        element: <PrivateRoute role={RoleValues.REGULAR}/>,
+        children: [
+            {
+                Component: MainLayout,
+                children: mainLayoutRoutes
+            },
+        ],
+    },
+    {
+        path: '*',
+        Component: NotFound,
+    },
 ];
 
 export default routes;
