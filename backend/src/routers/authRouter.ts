@@ -20,7 +20,7 @@ export const authRouter = Router();
 authRouter.post("/register", authController.register);
 authRouter.post("/login", passport.authenticate("local"), authController.login);
 
-authRouter.get("/", passport.session(), authz(RoleValues.REGULAR), (req, res, next) => {
+authRouter.get("/", passport.session(), authz(RoleValues.REGULAR), (req, res) => {
     res.send(req.user);
 });
 
