@@ -9,8 +9,8 @@ interface Message {
 
 export const ChatMessage = (props: { message: Message }) => {
     const date = props.message.createdAt;
-    const messageClass: string = props.message.isOutgoing ? "chat-message chat-message--received" : "chat-message chat-message--sent";
-    const messageTextClass: string = props.message.isOutgoing ? "chat-message-text chat-message-text--received" : "chat-message-text chat-message-text--sent";
+    const messageClass: string = props.message.isOutgoing ? "chat-message chat-message--sent" : "chat-message chat-message--received";
+    const messageTextClass: string = props.message.isOutgoing ? "chat-message-text chat-message-text--sent" : "chat-message-text chat-message-text--received";
 
     return (
         <div className={messageClass}>
