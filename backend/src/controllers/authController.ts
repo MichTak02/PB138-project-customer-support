@@ -41,8 +41,13 @@ const register = async (req: Request, res: Response) => {
     res.status(201).end();
 };
 
-const login = async (_req: Request, res: Response) => {
-    res.status(200).end();
+const login = async (req: Request, res: Response) => {
+    res.status(200).send({
+        id: req.user?.id,
+        email: req.user?.email,
+        displayName: req.user?.displayName,
+        role: req.user?.role
+    });
 };
 
 export const authController = {
