@@ -9,7 +9,8 @@ class ApiService<TDto, TExtendedDto, TCreateDto, TUpdateDto, TFilters> {
     constructor(endpoint: string) {
         this.endpoint = endpoint;
         this.axiosInstance = axios.create({
-            baseURL: 'http://localhost:3001',
+            baseURL: import.meta.env.VITE_API_URL,
+            withCredentials: true
         });
     }
 
