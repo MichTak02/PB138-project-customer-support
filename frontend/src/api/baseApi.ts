@@ -4,7 +4,8 @@ import {
 } from "../models/response";
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:6481',
+  baseURL: import.meta.env.VITE_API_URL,
+  withCredentials: true
 });
 
 async function getAll<T>(path: string, config?: AxiosRequestConfig): Promise<T> {

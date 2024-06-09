@@ -1,7 +1,8 @@
 import { Router } from "express";
 import passport from "passport";
-import {Role} from "../repositories/user/types";
+import {Role, RoleValues} from "../repositories/user/types";
 import {authController} from "../controllers/authController";
+import {authz} from "../middleware/authMiddleware";
 
 declare global {
     namespace Express {
@@ -19,7 +20,11 @@ export const authRouter = Router();
 authRouter.post("/register", authController.register);
 authRouter.post("/login", passport.authenticate("local"), authController.login);
 
-authRouter.post("/logout", passport.session(), (req, res, next) => {
+authRouter.get("/", passport.session(), authz(RoleValues.REGULAR), (req, res) => {
+    res.send(req.user);
+});
+
+authRouter.post("/logout", passport.session(), authz(RoleValues.REGULAR), (req, res, next) => {
     req.logout(
         {
             keepSessionInfo: false,
@@ -28,7 +33,7 @@ authRouter.post("/logout", passport.session(), (req, res, next) => {
             if (err) {
                 return next(err);
             }
-            res.status(200).end();
+            res.status(204).end();
         }
     );
 });
