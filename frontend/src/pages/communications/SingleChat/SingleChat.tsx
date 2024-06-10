@@ -4,7 +4,7 @@ import {SendMessage} from "../../../components/Communication/SendMessage/SendMes
 import {useChatCommunications} from "../../../hooks/useChatCommunication.ts";
 import {useCustomer} from "../../../hooks/useCustomers.ts";
 import {Button} from "@mui/material";
-import {useLayoutEffect, useMemo, useState} from "react";
+import {useLayoutEffect, useMemo} from "react";
 
 interface Participants {
     userId: number;
@@ -24,11 +24,7 @@ export const SingleChat = (props: { participants: Participants }) => {
     } = useCustomer(props.participants.customerId);
 
 
-    const [currentPage, setCurrentPage] = useState(0);
-    const messagesList = useMemo(() => messages?.pages.flatMap(page => page), [messages?.pages]);
-    useMemo(() => window.scrollTo(0, document.body.scrollHeight), []);
-    useLayoutEffect(() => window.scrollTo(0, document.body.scrollHeight), []); // TODO fix initial scroll
-
+    useLayoutEffect(() => window.scrollTo(0, document.body.scrollHeight), [messages?.pages[0]]);
 
     if (isLoading || customerIsLoading) return <div>Loading...</div>;
     if (error || customerError) return <div>Error loading messages</div>;
@@ -44,11 +40,11 @@ export const SingleChat = (props: { participants: Participants }) => {
             <Button
                 variant="outlined"
                 disabled={!hasNextPage || isFetchingNextPage}
-                onClick={() => {
-                    fetchNextPage().then(() => setCurrentPage(currentPage + 1));
+                onClick={async () => {
+                    await fetchNextPage();
                 }}
             >Load more</Button>
-            {messagesList?.reverse().map((message) => <ChatMessage message={message}></ChatMessage>)}
+            {messages?.pages.flatMap(page => page).reverse().map((message) => <ChatMessage message={message} key={message.id}></ChatMessage>)}
             <SendMessage sendMessageProps={{
                 customerId: props.participants.customerId,
                 userId: props.participants.userId
