@@ -106,7 +106,7 @@ export const chatCommunicationRepository = {
             if (!cursorId) {
                 const comms = await prisma.chatCommunication.findMany({
                     take: READ_MANY_TAKE,
-                    orderBy: { id: 'asc' },
+                    orderBy: { timestamp: 'desc' },
                     where: filter
                 });
 
@@ -117,7 +117,7 @@ export const chatCommunicationRepository = {
                 take: READ_MANY_TAKE,
                 skip: 1,
                 cursor: { id: cursorId },
-                orderBy: { id: 'asc' },
+                orderBy: { timestamp: 'desc' },
                 where: filter
             });
             return Result.ok(comms.map(u => chatCommunicationModelToChatCommunicationDto(u)));
@@ -136,7 +136,7 @@ export const chatCommunicationRepository = {
             if (!cursorId) {
                 const comms = await prisma.chatCommunication.findMany({
                     take: READ_MANY_TAKE,
-                    orderBy: { id: 'asc' },
+                    orderBy: { timestamp: 'desc' },
                     include: includeObj,
                     where: filter
                 });
@@ -148,7 +148,7 @@ export const chatCommunicationRepository = {
                 take: READ_MANY_TAKE,
                 skip: 1,
                 cursor: { id: cursorId },
-                orderBy: { id: 'asc' },
+                orderBy: { timestamp: 'desc' },
                 include: includeObj,
                 where: filter
             });
