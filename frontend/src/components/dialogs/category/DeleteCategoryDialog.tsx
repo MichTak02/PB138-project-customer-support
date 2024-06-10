@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography } from '@mui/material';
 import { DeleteDialogProps, DeleteDialogContext } from "../../dataDisplay/CursorPaginatedDataGrid.tsx";
 import { CategoryDto } from "../../../models/category.ts";
@@ -13,16 +13,18 @@ const DeleteCategoryDialog = () => {
             close();
         } catch (e) {
             if (e instanceof Error) {
-                if (e.message.includes("Cannot delete category as it is used by some products")) {
-                    setError("Cannot delete this category because it is assigned to one or more products.");
-                } else {
-                    setError(e.message);
-                }
+                setError(e.message);
             } else {
                 setError('An unknown error occurred');
             }
         }
     };
+
+    useEffect(() => {
+        if (!isOpen) {
+            setError(null);
+        }
+    }, [isOpen]);
 
     return (
         <Dialog open={isOpen} onClose={close}>

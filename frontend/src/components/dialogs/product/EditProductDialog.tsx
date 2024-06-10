@@ -106,7 +106,7 @@ const EditProductDialog: React.FC = () => {
                         sx={{ mt: 2 }}
                     />
                     <FormControl sx={{ mt: 2 }} component="fieldset" error={!!errors.type}>
-                        <InputLabel component="legend">Type</InputLabel>
+                        <InputLabel sx={{ mb: 2, position: 'relative' }} component="legend">Type</InputLabel>
                         <FormGroup row>
                             <FormControlLabel
                                 control={
