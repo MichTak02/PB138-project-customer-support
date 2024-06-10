@@ -48,7 +48,7 @@ export const VoiceRecordsHistory = (props: { participants: Participants }) => {
                             fetchNextPage().then(() => setCurrentPage(currentPage + 1));
                         }}
                     >Load more</Button>
-                    {voicesList?.reverse().map((comm) => <VoiceRecord callInfo={comm}></VoiceRecord>)}
+                    {voicesList?.reverse().map((comm) => <VoiceRecord callInfo={comm} key={comm.id}></VoiceRecord>)}
                 </div>
             </Page>
     );

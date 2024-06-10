@@ -15,8 +15,8 @@ export const VoiceRecord = (props: { callInfo: VoiceCommunicationDto }) => {
         <div className={voiceRecordClass}>
             <div className="voice-record__heading">Phone call</div>
             <div className="voice-record__description">
-                Start: {props.callInfo.start.toLocaleString()} <br/>
-                Duration: {hours > 0 && (hours + "h")} {hours > 0 || minutes > 0 && (minutes + "m")} {seconds}s
+                Start: {new Date(props.callInfo.start).toLocaleString()} <br/>
+                Duration: {hours > 0 && (hours + "h")} {minutes}m {seconds}s
             </div>
             <Audio id={props.callInfo.id}></Audio>
         </div>
