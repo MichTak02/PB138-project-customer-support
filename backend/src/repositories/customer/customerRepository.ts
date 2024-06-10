@@ -76,6 +76,28 @@ export const customerRepository = {
         }
     },
 
+    async readManyEmails(productIds: number[]) {
+        try {
+            const customers = await prisma.customer.findMany({
+                where: {
+                    products: {
+                      some: {
+                        id: {
+                          in: productIds,
+                        },
+                      },
+                    },
+                  },
+                  select: {
+                    email: true,
+                  },
+            })
+            return Result.ok(customers.map(customer => customer.email));
+        } catch (error) {
+            return handleRepositoryErrors(error);
+        }
+    },
+
     async readOneExtended(id: number): DbResult<CustomerExtendedDto> {
         try {
             const customer = await prisma.customer.findFirstOrThrow({
