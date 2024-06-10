@@ -1,6 +1,6 @@
-import {BaseModelId} from "./base.ts";
-import {ProductExtendedDto} from "./product.ts";
-
+// offerToProduct.ts
+import { BaseModelId } from "./base.ts";
+import { ProductExtendedDto } from "./product.ts";
 
 export type OfferToProductDto = BaseModelId & {
     offerId: number,

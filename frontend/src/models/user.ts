@@ -13,7 +13,7 @@ export type UserDto = BaseModelId & {
     displayName:  string
     createdOn:    Date
     role:         Role
-    passwordHash: string
+    password: string
 }
 
 export type UserInfoDto = Omit<UserDto, "role" | "passwordHash" | "createdOn">
