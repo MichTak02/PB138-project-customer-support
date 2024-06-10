@@ -1,33 +1,71 @@
-import React, { useContext, useEffect } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, FormGroup, Box } from '@mui/material';
+import React, { useContext, useEffect, useRef } from 'react';
+import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, FormGroup, Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, CircularProgress } from '@mui/material';
 import { CustomerUpdateDto, CustomerExtendedDto } from "../../../models/customer.ts";
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { editCustomerSchema } from "../../../validationSchemas/forms.ts";
 import { EditDialogProps, EditDialogContext } from "../../dataDisplay/CursorPaginatedDataGrid.tsx";
+import { useProducts } from '../../../hooks/useProducts';
 
 const EditCustomerDialog: React.FC = () => {
     const { isOpen, close, editEntity, useEntityExtended, targetEntityId }: EditDialogProps<CustomerExtendedDto, CustomerUpdateDto> = useContext(EditDialogContext);
 
     const { data: targetEntity, isLoading, error } = useEntityExtended(targetEntityId);
 
-    const { handleSubmit, formState: { errors }, register, reset } = useForm<CustomerUpdateDto>({
+    const { handleSubmit, formState: { errors }, register, control, reset, setValue } = useForm<CustomerUpdateDto>({
         resolver: zodResolver(editCustomerSchema),
     });
 
+    const {
+        data: products,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage
+    } = useProducts();
+
+    const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+    const handleProductScroll = (event: React.UIEvent<HTMLDivElement>) => {
+        if (hasNextPage && !isFetchingNextPage && event.currentTarget.scrollTop + event.currentTarget.clientHeight >= event.currentTarget.scrollHeight) {
+            fetchNextPage();
+        }
+    };
+
+    useEffect(() => {
+        if (loadMoreRef.current && hasNextPage && !isFetchingNextPage) {
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    fetchNextPage();
+                }
+            }, { threshold: 1.0 });
+            observer.observe(loadMoreRef.current);
+            return () => observer.disconnect();
+        }
+    }, [loadMoreRef.current, hasNextPage, isFetchingNextPage]);
+
     useEffect(() => {
         if (targetEntity) {
-            reset(targetEntity);
+            const initialValues = {
+                ...targetEntity,
+                productIds: targetEntity.products.map(product => product.id)
+            };
+            reset(initialValues);
         }
     }, [targetEntity, reset]);
 
     const onUpdateCustomer = async (data: CustomerUpdateDto) => {
+        if (data.productIds && data.productIds.length === 0) {
+            alert("Please select at least one product.");
+            return;
+        }
         await editEntity(targetEntityId, data);
         close();
     };
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error loading customer data</div>;
+
+    const sortedProducts = products?.pages.flatMap(page => page).sort((a, b) => a.name.localeCompare(b.name)) || [];
 
     return (
         <Dialog open={isOpen} onClose={close} maxWidth="md" fullWidth>
@@ -62,7 +100,41 @@ const EditCustomerDialog: React.FC = () => {
                         error={!!errors.phoneNumber}
                         helperText={errors.phoneNumber?.message}
                     />
+                    <FormControl fullWidth error={!!errors.productIds}>
+                        <InputLabel id="product-label">Products</InputLabel>
+                        <Controller
+                            control={control}
+                            name="productIds"
+                            render={({ field }) => (
+                                <Select
+                                    labelId="product-label"
+                                    multiple
+                                    {...field}
+                                    value={field.value ?? []}
+                                    renderValue={(selected) => {
+                                        const selectedProducts = sortedProducts.filter(product => selected.includes(product.id));
+                                        return selectedProducts.map(product => product.name).join(', ') || '';
+                                    }}
+                                    MenuProps={{ onScroll: handleProductScroll }}
+                                >
+                                    {sortedProducts.map((product) => (
+                                        <MenuItem key={product.id} value={product.id}>
+                                            <Checkbox checked={field.value ? field.value.includes(product.id) : false} />
+                                            <ListItemText primary={product.name} />
+                                        </MenuItem>
+                                    ))}
+                                    {isFetchingNextPage && (
+                                        <MenuItem disabled>
+                                            <CircularProgress size={24} />
+                                        </MenuItem>
+                                    )}
+                                </Select>
+                            )}
+                        />
+                        {errors.productIds && <p>{errors.productIds.message}</p>}
+                    </FormControl>
                 </Box>
+                <div ref={loadMoreRef} />
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleSubmit(onUpdateCustomer)} color="primary">Update Customer</Button>

@@ -1,10 +1,10 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { EditDialogProps, EditDialogContext } from "../../dataDisplay/CursorPaginatedDataGrid.tsx";
 import { OfferExtendedDto, OfferUpdateDto } from "../../../models/offer.ts";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { editOfferSchema } from "../../../validationSchemas/forms.ts";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormGroup, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormGroup, TextField, FormControl, InputLabel, Select, MenuItem, CircularProgress } from "@mui/material";
 import { useProducts } from "../../../hooks/useProducts";
 
 const EditOfferDialog: React.FC = () => {
@@ -16,11 +16,18 @@ const EditOfferDialog: React.FC = () => {
         resolver: zodResolver(editOfferSchema),
     });
 
-    const { data: products } = useProducts();
+    const {
+        data: products,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage
+    } = useProducts();
     const { fields, append, remove } = useFieldArray({
         control,
         name: "offerToProducts"
     });
+
+    const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         if (targetEntity) {
@@ -36,6 +43,18 @@ const EditOfferDialog: React.FC = () => {
         }
     }, [targetEntity, reset]);
 
+    useEffect(() => {
+        if (loadMoreRef.current && hasNextPage && !isFetchingNextPage) {
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    fetchNextPage();
+                }
+            }, { threshold: 1.0 });
+            observer.observe(loadMoreRef.current);
+            return () => observer.disconnect();
+        }
+    }, [loadMoreRef.current, hasNextPage, isFetchingNextPage]);
+
     const onUpdateOffer = async (data: OfferUpdateDto) => {
         data.offerToProducts?.forEach(product => {
             product.productQuantity = Number(product.productQuantity);
@@ -44,6 +63,15 @@ const EditOfferDialog: React.FC = () => {
         await editEntity(targetEntityId, data);
         close();
     };
+
+    const handleProductScroll = (event: React.UIEvent<HTMLDivElement>) => {
+        if (hasNextPage && !isFetchingNextPage && event.currentTarget.scrollTop + event.currentTarget.clientHeight >= event.currentTarget.scrollHeight) {
+            fetchNextPage();
+        }
+    };
+
+    // Seřaďte produkty podle abecedy
+    const sortedProducts = products?.pages.flatMap(page => page).sort((a, b) => a.name.localeCompare(b.name)) || [];
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error loading offer data</div>;
@@ -77,13 +105,19 @@ const EditOfferDialog: React.FC = () => {
                                     name={`offerToProducts.${index}.productId`}
                                     control={control}
                                     render={({ field }) => (
-                                        <Select {...field}>
-                                            {products?.pages.flatMap(page =>
-                                                page.map((product) => (
-                                                    <MenuItem key={product.id} value={product.id}>
-                                                        {product.name}
-                                                    </MenuItem>
-                                                ))
+                                        <Select
+                                            {...field}
+                                            MenuProps={{ onScroll: handleProductScroll }}
+                                        >
+                                            {sortedProducts.map((product) => (
+                                                <MenuItem key={product.id} value={product.id}>
+                                                    {product.name}
+                                                </MenuItem>
+                                            ))}
+                                            {isFetchingNextPage && (
+                                                <MenuItem disabled>
+                                                    <CircularProgress size={24} />
+                                                </MenuItem>
                                             )}
                                         </Select>
                                     )}
@@ -115,6 +149,7 @@ const EditOfferDialog: React.FC = () => {
                         Add Product
                     </Button>
                 </Box>
+                <div ref={loadMoreRef} />
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleSubmit(onUpdateOffer)} color="primary">Update Offer</Button>

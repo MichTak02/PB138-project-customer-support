@@ -1,5 +1,7 @@
-import React, { useContext } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, FormGroup, Box, Select, MenuItem, InputLabel, FormControl, Checkbox, ListItemText, FormControlLabel } from '@mui/material';
+import React, { useContext, useEffect, useRef } from 'react';
+import {
+    Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, FormGroup, Box, Select, MenuItem, InputLabel, FormControl, Checkbox, ListItemText, FormControlLabel, CircularProgress
+} from '@mui/material';
 import { ProductCreateDto } from "../../../models/product.ts";
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,11 +11,8 @@ import { useCategories } from '../../../hooks/useCategories';
 
 const CreateProductDialog = () => {
     const { isOpen, close, createEntity }: CreateDialogProps<ProductCreateDto> = useContext(CreateDialogContext);
-    const { data: categories } = useCategories();
 
-    const {
-        handleSubmit, formState: { errors }, register, control, setValue, watch
-    } = useForm<ProductCreateDto>({
+    const { handleSubmit, formState: { errors }, register, control, setValue, watch } = useForm<ProductCreateDto>({
         resolver: zodResolver(createProductSchema),
         defaultValues: {
             name: '',
@@ -23,6 +22,15 @@ const CreateProductDialog = () => {
             categoryIds: []
         }
     });
+
+    const {
+        data: categories,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage
+    } = useCategories();
+
+    const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
     const selectedType = watch('type');
 
@@ -34,6 +42,26 @@ const CreateProductDialog = () => {
         await createEntity(data);
         close();
     };
+
+    const handleCategoryScroll = (event: React.UIEvent<HTMLDivElement>) => {
+        if (hasNextPage && !isFetchingNextPage && event.currentTarget.scrollTop + event.currentTarget.clientHeight >= event.currentTarget.scrollHeight) {
+            fetchNextPage();
+        }
+    };
+
+    useEffect(() => {
+        if (loadMoreRef.current && hasNextPage && !isFetchingNextPage) {
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    fetchNextPage();
+                }
+            }, { threshold: 1.0 });
+            observer.observe(loadMoreRef.current);
+            return () => observer.disconnect();
+        }
+    }, [loadMoreRef.current, hasNextPage, isFetchingNextPage]);
+
+    const sortedCategories = categories?.pages.flatMap(page => page).sort((a, b) => a.name.localeCompare(b.name)) || [];
 
     return (
         <Dialog open={isOpen} onClose={close} maxWidth="md" fullWidth>
@@ -98,21 +126,23 @@ const CreateProductDialog = () => {
                                     labelId="category-label"
                                     multiple
                                     {...field}
-                                    value={field.value ?? []} 
+                                    value={field.value ?? []}
                                     renderValue={(selected) => {
-                                        const selectedCategories = categories?.pages.flatMap(page => 
-                                            page.filter(category => selected.includes(category.id))
-                                        );
-                                        return selectedCategories?.map(category => category.name).join(', ') || '';
+                                        const selectedCategories = sortedCategories.filter(category => selected.includes(category.id));
+                                        return selectedCategories.map(category => category.name).join(', ') || '';
                                     }}
+                                    MenuProps={{ onScroll: handleCategoryScroll }}
                                 >
-                                    {categories?.pages.flatMap(page =>
-                                        page.map((category) => (
-                                            <MenuItem key={category.id} value={category.id}>
-                                                <Checkbox checked={field.value.includes(category.id)} />
-                                                <ListItemText primary={category.name} />
-                                            </MenuItem>
-                                        ))
+                                    {sortedCategories.map((category) => (
+                                        <MenuItem key={category.id} value={category.id}>
+                                            <Checkbox checked={field.value.includes(category.id)} />
+                                            <ListItemText primary={category.name} />
+                                        </MenuItem>
+                                    ))}
+                                    {isFetchingNextPage && (
+                                        <MenuItem disabled>
+                                            <CircularProgress size={24} />
+                                        </MenuItem>
                                     )}
                                 </Select>
                             )}
@@ -120,6 +150,7 @@ const CreateProductDialog = () => {
                         {errors.categoryIds && <p>{errors.categoryIds.message}</p>}
                     </FormControl>
                 </Box>
+                <div ref={loadMoreRef} />
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleSubmit(onCreateProduct)}>Create product</Button>

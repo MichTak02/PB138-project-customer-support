@@ -69,6 +69,7 @@ export const createCustomerSchema = z.object({
     surname: z.string().min(1, "Surname is required.").max(100, "Surname is too long."),
     email: z.string().email("Invalid email"),
     phoneNumber: z.string().min(1, "Phone number is required.").max(20, "Phone number is too long."),
+    productIds: z.array(z.number()).nonempty("At least one product is required."),
 });
 
 export const editCustomerSchema = z.object({

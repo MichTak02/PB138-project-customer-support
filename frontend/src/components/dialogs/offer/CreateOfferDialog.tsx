@@ -1,5 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, FormGroup, Box, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import React, { useContext, useEffect, useRef } from 'react';
+import {
+    Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, FormGroup, Box, Select, MenuItem, FormControl, InputLabel, CircularProgress
+} from '@mui/material';
 import { OfferCreateDto } from "../../../models/offer.ts";
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,11 +16,18 @@ const CreateOfferDialog = () => {
         resolver: zodResolver(createOfferSchema),
     });
 
-    const { data: products } = useProducts();
+    const {
+        data: products,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage
+    } = useProducts();
     const { fields, append, remove } = useFieldArray({
         control,
         name: "offerToProducts"
     });
+
+    const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
     const onCreateOffer = async (data: OfferCreateDto) => {
         data.offerToProducts.forEach(product => {
@@ -28,6 +37,26 @@ const CreateOfferDialog = () => {
         await createEntity(data);
         close();
     };
+
+    const handleProductScroll = (event: React.UIEvent<HTMLDivElement>) => {
+        if (hasNextPage && !isFetchingNextPage && event.currentTarget.scrollTop + event.currentTarget.clientHeight >= event.currentTarget.scrollHeight) {
+            fetchNextPage();
+        }
+    };
+
+    useEffect(() => {
+        if (loadMoreRef.current && hasNextPage && !isFetchingNextPage) {
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    fetchNextPage();
+                }
+            }, { threshold: 1.0 });
+            observer.observe(loadMoreRef.current);
+            return () => observer.disconnect();
+        }
+    }, [loadMoreRef.current, hasNextPage, isFetchingNextPage]);
+
+    const sortedProducts = products?.pages.flatMap(page => page).sort((a, b) => a.name.localeCompare(b.name)) || [];
 
     return (
         <Dialog open={isOpen} onClose={close} maxWidth="md" fullWidth>
@@ -58,13 +87,19 @@ const CreateOfferDialog = () => {
                                     name={`offerToProducts.${index}.productId`}
                                     control={control}
                                     render={({ field }) => (
-                                        <Select {...field}>
-                                            {products?.pages.flatMap(page => 
-                                                page.map((product) => (
-                                                    <MenuItem key={product.id} value={product.id}>
-                                                        {product.name}
-                                                    </MenuItem>
-                                                ))
+                                        <Select
+                                            {...field}
+                                            MenuProps={{ onScroll: handleProductScroll }}
+                                        >
+                                            {sortedProducts.map((product) => (
+                                                <MenuItem key={product.id} value={product.id}>
+                                                    {product.name}
+                                                </MenuItem>
+                                            ))}
+                                            {isFetchingNextPage && (
+                                                <MenuItem disabled>
+                                                    <CircularProgress size={24} />
+                                                </MenuItem>
                                             )}
                                         </Select>
                                     )}
@@ -96,6 +131,7 @@ const CreateOfferDialog = () => {
                         Add Product
                     </Button>
                 </Box>
+                <div ref={loadMoreRef} />
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleSubmit(onCreateOffer)} color="primary">Create Offer</Button>

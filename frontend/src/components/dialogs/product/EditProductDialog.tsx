@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import {
     EditDialogProps,
     EditDialogContext,
@@ -7,7 +7,7 @@ import { ProductDto, ProductUpdateDto } from "../../../models/product.ts";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { editProductSchema } from "../../../validationSchemas/forms.ts";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormGroup, TextField, Select, MenuItem, FormControl, InputLabel, Checkbox, ListItemText } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormGroup, TextField, Select, MenuItem, FormControl, InputLabel, Checkbox, ListItemText, CircularProgress } from "@mui/material";
 import { useCategories } from "../../../hooks/useCategories";
 
 const EditProductDialog: React.FC = () => {
@@ -17,7 +17,14 @@ const EditProductDialog: React.FC = () => {
     });
 
     const { data: product } = useEntityExtended(targetEntityId);
-    const { data: categories } = useCategories();
+    const {
+        data: categories,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage
+    } = useCategories();
+
+    const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         if (product) {
@@ -33,6 +40,26 @@ const EditProductDialog: React.FC = () => {
         await editEntity(targetEntityId, data);
         close();
     };
+
+    const handleCategoryScroll = (event: React.UIEvent<HTMLDivElement>) => {
+        if (hasNextPage && !isFetchingNextPage && event.currentTarget.scrollTop + event.currentTarget.clientHeight >= event.currentTarget.scrollHeight) {
+            fetchNextPage();
+        }
+    };
+
+    useEffect(() => {
+        if (loadMoreRef.current && hasNextPage && !isFetchingNextPage) {
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    fetchNextPage();
+                }
+            }, { threshold: 1.0 });
+            observer.observe(loadMoreRef.current);
+            return () => observer.disconnect();
+        }
+    }, [loadMoreRef.current, hasNextPage, isFetchingNextPage]);
+
+    const sortedCategories = categories?.pages.flatMap(page => page).sort((a, b) => a.name.localeCompare(b.name)) || [];
 
     return (
         <Dialog open={isOpen} onClose={close} maxWidth="md" fullWidth>
@@ -63,13 +90,24 @@ const EditProductDialog: React.FC = () => {
                         error={!!errors.price}
                         helperText={errors.price?.message}
                     />
-                    <TextField
-                        label="Type"
-                        fullWidth
-                        {...register("type")}
-                        error={!!errors.type}
-                        helperText={errors.type?.message}
-                    />
+                    <FormControl fullWidth error={!!errors.type} sx={{ marginBottom: 2 }}>
+                        <InputLabel id="type-label">Type</InputLabel>
+                        <Controller
+                            control={control}
+                            name="type"
+                            render={({ field }) => (
+                                <Select
+                                    labelId="type-label"
+                                    {...field}
+                                    value={field.value ?? 'PRODUCT'}
+                                >
+                                    <MenuItem value="PRODUCT">Product</MenuItem>
+                                    <MenuItem value="SERVICE">Service</MenuItem>
+                                </Select>
+                            )}
+                        />
+                        {errors.type && <p>{errors.type.message}</p>}
+                    </FormControl>
                     <FormControl fullWidth error={!!errors.categoryIds} sx={{ marginBottom: 2 }}>
                         <InputLabel id="category-label">Categories</InputLabel>
                         <Controller
@@ -82,19 +120,21 @@ const EditProductDialog: React.FC = () => {
                                     {...field}
                                     value={field.value ?? []}
                                     renderValue={(selected) => {
-                                        const selectedCategories = categories?.pages.flatMap(page => 
-                                            page.filter(category => selected.includes(category.id))
-                                        );
-                                        return selectedCategories?.map(category => category.name).join(', ') || '';
+                                        const selectedCategories = sortedCategories.filter(category => selected.includes(category.id));
+                                        return selectedCategories.map(category => category.name).join(', ') || '';
                                     }}
+                                    MenuProps={{ onScroll: handleCategoryScroll }}
                                 >
-                                    {categories?.pages.flatMap(page =>
-                                        page.map((category) => (
-                                            <MenuItem key={category.id} value={category.id}>
-                                                <Checkbox checked={field.value ? field.value.includes(category.id) : false} />
-                                                <ListItemText primary={category.name} />
-                                            </MenuItem>
-                                        ))
+                                    {sortedCategories.map((category) => (
+                                        <MenuItem key={category.id} value={category.id}>
+                                            <Checkbox checked={field.value ? field.value.includes(category.id) : false} />
+                                            <ListItemText primary={category.name} />
+                                        </MenuItem>
+                                    ))}
+                                    {isFetchingNextPage && (
+                                        <MenuItem disabled>
+                                            <CircularProgress size={24} />
+                                        </MenuItem>
                                     )}
                                 </Select>
                             )}
@@ -102,6 +142,7 @@ const EditProductDialog: React.FC = () => {
                         {errors.categoryIds && <p>{errors.categoryIds.message}</p>}
                     </FormControl>
                 </Box>
+                <div ref={loadMoreRef} />
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleSubmit(onUpdateProduct)} color="primary">Update product</Button>
