@@ -4,6 +4,7 @@ import { CategoryCreateDto, CategoryDto, CategoryFilters, CategoryUpdateDto } fr
 import { categoryModelToCategoryDto } from "./mappers";
 import { DbResult } from "../types";
 import {handleRepositoryErrors, READ_MANY_TAKE} from "../../utils/repositoryUtils";
+import {ConflictError} from "../../errors/errors";
 
 const categoryRepository = {
     async create(data: CategoryCreateDto): DbResult<CategoryDto> {
@@ -81,7 +82,7 @@ const categoryRepository = {
                         },
                     });
                     if (category.products.length != 0) {
-                        throw new Error("Cannot delete category as it is used by some products");
+                        throw new ConflictError("Cannot delete category as it is used by some products");
                     }
                     const deletedCategory = await transaction.category.delete({
                         where: { id },
