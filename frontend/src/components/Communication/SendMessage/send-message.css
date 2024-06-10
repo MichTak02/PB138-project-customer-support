@@ -1,0 +1,7 @@
+.send-message {
+    display: flex;
+    flex-direction: row;
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+}

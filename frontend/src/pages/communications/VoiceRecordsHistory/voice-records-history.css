@@ -1,0 +1,6 @@
+.voice-records-history {
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    background-color: white;
+}
