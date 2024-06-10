@@ -16,14 +16,15 @@ import useLogout from "../../hooks/useLogout.ts";
 import {useState} from "react";
 import DensityMediumIcon from '@mui/icons-material/DensityMedium';
 import useAuth from "../../hooks/useAuth.ts";
+import {Role, RoleValues} from "../../models/user.ts";
 
-const pathAndTitle: Record<string, string> = {
-    'dashboard': 'Dashboard',
-    'products': 'Products',
-    'users': 'Users',
-    'customers': 'Customers',
-    'categories': 'Categories',
-    'offers': 'Offers',
+const pathAndTitle: Record<string, {role: Role, label: string}> = {
+    'dashboard': {role: RoleValues.REGULAR, label: 'Dashboard'},
+    'products': {role: RoleValues.REGULAR, label: 'Products'},
+    'users': {role: RoleValues.ADMIN, label: 'Users'},
+    'customers': {role: RoleValues.REGULAR, label: 'Customers'},
+    'categories': {role: RoleValues.REGULAR, label: 'Categories'},
+    'offers': {role: RoleValues.REGULAR, label: 'Offers'},
 };
 
 export function Navbar() {
@@ -43,9 +44,10 @@ export function Navbar() {
     };
 
     const menuItems = Object.keys(pathAndTitle).map((path) => (
-        <ListItemButton component={NavLink} to={path} key={path} onClick={toggleDrawer(false)}>
-            <ListItemText primary={pathAndTitle[path]} />
-        </ListItemButton>
+        pathAndTitle[path].role === auth?.role ?
+            (<ListItemButton component={NavLink} to={path} key={path} onClick={toggleDrawer(false)}>
+                <ListItemText primary={pathAndTitle[path].label} />
+            </ListItemButton>) : undefined
     ));
 
     return (
@@ -91,7 +93,7 @@ export function Navbar() {
                                             },
                                         }}
                                     >
-                                        {pathAndTitle[path]}
+                                        {pathAndTitle[path].label}
                                     </Button>
                                 ))}
                                 <Button onClick={handleLogout} color="inherit" component={Link} to="/login">
