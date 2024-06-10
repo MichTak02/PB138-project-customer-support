@@ -1,114 +1,55 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Page from '../../components/base/Page';
-import { Typography, Button } from '@mui/material';
-import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
-import { useOffers, useCreateOffer, useUpdateOffer, useDeleteOffer } from '../../hooks/useOffers.ts';
-import { Offer } from '../../models/offer';
-import AddOfferDialog from '../../components/dialogs/AddOfferDialog';
-import EditOfferDialog from '../../components/dialogs/EditOfferDialog';
+import { Typography } from '@mui/material';
+import { useOffers, useOffer, useCreateOffer, useUpdateOffer, useDeleteOffer } from '../../hooks/useOffers.ts';
+import { OfferDto, OfferExtendedDto, OfferCreateDto, OfferUpdateDto } from '../../models/offer';
+import CreateOfferDialog from '../../components/dialogs/offer/CreateOfferDialog.tsx';
+import EditOfferDialog from '../../components/dialogs/offer/EditOfferDialog.tsx';
+import DetailOfferDialog from '../../components/dialogs/offer/DetailOfferDialog.tsx';
+import DeleteOfferDialog from '../../components/dialogs/offer/DeleteOfferDialog.tsx';
+import CursorPaginatedDataGrid from '../../components/dataDisplay/CursorPaginatedDataGrid.tsx';
+import { GridRenderCellParams } from '@mui/x-data-grid';
 
 const OfferManagement: React.FC = () => {
-  const { data: offers, isLoading, error } = useOffers();
-  const createOfferMutation = useCreateOffer();
-  const updateOfferMutation = useUpdateOffer();
-  const deleteOfferMutation = useDeleteOffer();
-
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [currentOffer, setCurrentOffer] = useState<Offer | null>(null);
-
-  const handleAddOffer = (offer: { name: string; description: string }) => {
-    createOfferMutation.mutate(offer);
-  };
-
-  const handleEditOffer = (id: number, offer: { name: string; description: string }) => {
-    updateOfferMutation.mutate({ id, offer });
-  };
-
-  const handleDeleteOffer = (id: number) => {
-    deleteOfferMutation.mutate(id);
-  };
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading offers</div>;
-
-  return (
-    <Page title="Offer Management">
-      <Typography component="h1" variant="h5">
-        Offer Management
-      </Typography>
-      <Button variant="contained" color="primary" onClick={() => setIsCreateDialogOpen(true)}>
-        Add Offer
-      </Button>
-      <DataGrid
-        rows={offers || []}
-        columns={[
-          { field: 'id', headerName: 'ID', width: 70 },
-          { field: 'name', headerName: 'Name', width: 200 },
-          { field: 'description', headerName: 'Description', width: 400 },
-          {
+    const columns = [
+        { field: 'id', headerName: 'ID', width: 70 },
+        { field: 'name', headerName: 'Name', width: 200 },
+        { field: 'description', headerName: 'Description', width: 400 },
+        {
             field: 'products',
             headerName: 'Products',
             width: 400,
             renderCell: (params: GridRenderCellParams) => (
-              <div>
-                {(params.row as Offer).offerToProducts.map((offerToProduct) => (
-                  <div key={offerToProduct.id}>
-                    {offerToProduct.product.name} - {offerToProduct.newPrice} (Qty: {offerToProduct.productQuantity})
-                  </div>
-                ))}
-              </div>
+                <div>
+                    {(params.row as OfferExtendedDto).offerToProducts.map((offerToProduct) => (
+                        <div key={offerToProduct.id}>
+                            {offerToProduct.product.name} - {offerToProduct.newPrice} (Qty: {offerToProduct.productQuantity})
+                        </div>
+                    ))}
+                </div>
             ),
-          },
-          {
-            field: 'edit',
-            headerName: 'Edit',
-            width: 150,
-            renderCell: (params: GridRenderCellParams) => (
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={() => {
-                  setCurrentOffer(params.row as Offer);
-                  setIsEditDialogOpen(true);
-                }}
-              >
-                Edit
-              </Button>
-            ),
-          },
-          {
-            field: 'delete',
-            headerName: 'Delete',
-            width: 150,
-            renderCell: (params: GridRenderCellParams) => (
-              <Button
-                variant="contained"
-                color="error"
-                onClick={() => handleDeleteOffer((params.row as Offer).id)}
-              >
-                Delete
-              </Button>
-            ),
-          },
-        ]}
-        disableRowSelectionOnClick
-      />
+        },
+    ];
 
-      <AddOfferDialog
-        open={isCreateDialogOpen}
-        onClose={() => setIsCreateDialogOpen(false)}
-        onAddOffer={handleAddOffer}
-      />
-
-      <EditOfferDialog
-        open={isEditDialogOpen}
-        onClose={() => setIsEditDialogOpen(false)}
-        onEditOffer={handleEditOffer}
-        offer={currentOffer}
-      />
-    </Page>
-  );
+    return (
+        <Page title="Offer Management">
+            <Typography component="h1" variant="h5">
+                Offer Management
+            </Typography>
+            <CursorPaginatedDataGrid<OfferDto, OfferExtendedDto, OfferCreateDto, OfferUpdateDto>
+                useEntitiesHook={useOffers}
+                useEntityHook={useOffer}
+                useCreateEntityHook={useCreateOffer}
+                useUpdateEntityHook={useUpdateOffer}
+                useDeleteEntityHook={useDeleteOffer}
+                columns={columns}
+                createDialog={<CreateOfferDialog />}
+                editDialog={<EditOfferDialog />}
+                detailDialog={<DetailOfferDialog />}
+                deleteDialog={<DeleteOfferDialog />}
+            />
+        </Page>
+    );
 };
 
 export default OfferManagement;

@@ -1,10 +1,11 @@
 import {useContext} from 'react';
 import {Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, FormGroup, Box} from '@mui/material';
-import {CategoryCreateDto} from "../../models/category.ts";
+import {CategoryCreateDto} from "../../../models/category.ts";
 import {useForm} from 'react-hook-form';
 import {zodResolver} from "@hookform/resolvers/zod";
-import {createCategorySchema} from "../../validationSchemas/forms.ts";
-import {CreateDialogProps, CreateDialogContext} from "../dataDisplay/CursorPaginatedDataGrid.tsx";
+import {createCategorySchema} from "../../../validationSchemas/forms.ts";
+import {CreateDialogProps, CreateDialogContext} from "../../dataDisplay/CursorPaginatedDataGrid.tsx";
+import React from 'react';
 
 
 const CreateCategoryDialog = () => {
@@ -13,7 +14,6 @@ const CreateCategoryDialog = () => {
     // createEntity je funkce, ktera bere jako parametr objekt stejneho typu jako u CreateDialogProps, vytvori objekt
     const {isOpen, close, createEntity}: CreateDialogProps<CategoryCreateDto> = useContext(CreateDialogContext);
 
-    // genericky typ useForm je take potreba nastavit na stejny typ, jako je u CreateDialogProps
     const {
         handleSubmit, formState: {errors}, register
     } = useForm<CategoryCreateDto>({

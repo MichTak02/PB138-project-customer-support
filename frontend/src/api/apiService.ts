@@ -1,15 +1,16 @@
-import { AxiosInstance } from "axios";
-import {axiosInstance} from "./baseApi.ts";
+import axios, { AxiosInstance } from "axios";
+import { axiosInstance } from "./baseApi.ts";
 
 // the amount of entities the API returns
 export const GET_MANY_SIZE = 20;
+
 class ApiService<TDto, TExtendedDto, TCreateDto, TUpdateDto, TFilters> {
     private axiosInstance: AxiosInstance;
     private endpoint: string;
 
     constructor(endpoint: string) {
         this.endpoint = endpoint;
-        this.axiosInstance = axiosInstance
+        this.axiosInstance = axiosInstance;
     }
 
     private jsonToUrlQueryParams = (obj: any) => {
@@ -57,8 +58,15 @@ class ApiService<TDto, TExtendedDto, TCreateDto, TUpdateDto, TFilters> {
     }
 
     public delete = async (id: number): Promise<TDto> => {
-        const response = await this.axiosInstance.delete<TDto>(`${this.endpoint}/${id}`);
-        return response.data;
+        try {
+            const response = await this.axiosInstance.delete<TDto>(`${this.endpoint}/${id}`);
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response?.data?.message) {
+                throw new Error(error.response.data.message);
+            }
+            throw error;
+        }
     }
 }
 

@@ -9,11 +9,11 @@ import {
     FormGroup,
     Box
 } from '@mui/material';
-import {CategoryDto, CategoryUpdateDto} from '../../models/category';
-import {EditDialogContext, EditDialogProps} from "../dataDisplay/CursorPaginatedDataGrid.tsx";
+import {CategoryDto, CategoryUpdateDto} from '../../../models/category.ts';
+import {EditDialogContext, EditDialogProps} from "../../dataDisplay/CursorPaginatedDataGrid.tsx";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {editCategorySchema} from "../../validationSchemas/forms.ts";
+import {editCategorySchema} from "../../../validationSchemas/forms.ts";
 
 const EditCategoryDialog: React.FC = () => {
     // EditDialogProps bere 2 typove parametry - extended verze a update verze objektu

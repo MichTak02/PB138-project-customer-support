@@ -47,7 +47,10 @@ export const useDeleteCategory = () => {
     return useMutation({
         mutationFn: (id: number) => categoriesApi.delete(id),
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['categories']});
+            queryClient.invalidateQueries({ queryKey: ['categories'] });
+        },
+        onError: (error: Error) => {
+            console.error(error.message);
         },
     });
 };

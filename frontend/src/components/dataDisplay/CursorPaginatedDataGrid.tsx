@@ -1,25 +1,26 @@
-import React, {createContext, useState} from 'react';
+import React, { createContext, useState } from 'react';
 import {
     DataGrid, GridColDef,
     GridPaginationMeta,
     GridPaginationModel, GridRenderCellParams,
     GridValidRowModel
 } from '@mui/x-data-grid';
-import {GET_MANY_SIZE} from "../../api/apiService.ts";
-import {InfiniteData, UseInfiniteQueryResult, UseMutationResult, UseQueryResult} from "@tanstack/react-query";
-import {Button} from "@mui/material";
-import {BaseModelId} from "../../models/base.ts";
+import { GET_MANY_SIZE } from "../../api/apiService.ts";
+import { InfiniteData, UseInfiniteQueryResult, UseMutationResult, UseQueryResult } from "@tanstack/react-query";
+import { Button } from "@mui/material";
+import { BaseModelId } from "../../models/base.ts";
 
 type CursorPaginatedDataGridProps<TDto, TExtendedDto, TCreateDto, TUpdateDto> = {
-    useEntitesHook: () => UseInfiniteQueryResult<InfiniteData<TDto[], unknown>, Error>
-    useEntityHook: (id: number) =>  UseQueryResult<TExtendedDto, Error>
+    useEntitiesHook: () => UseInfiniteQueryResult<InfiniteData<TDto[]>, Error>
+    useEntityHook: (id: number) => UseQueryResult<TExtendedDto, Error>
     useCreateEntityHook: () => UseMutationResult<TDto, Error, TCreateDto, unknown>
-    useUpdateEntityHook: () =>   UseMutationResult<TDto, Error, {id: number, updateData: TUpdateDto}, unknown>
-    useDeleteEntityHook: () =>   UseMutationResult<TDto, Error, number, unknown>
+    useUpdateEntityHook: () => UseMutationResult<TDto, Error, { id: number, updateData: TUpdateDto }, unknown>
+    useDeleteEntityHook: () => UseMutationResult<TDto, Error, number, unknown>
     columns: GridColDef[]
     createDialog: React.ReactElement
     editDialog: React.ReactElement
     detailDialog: React.ReactElement
+    deleteDialog: React.ReactElement
 }
 
 export interface CreateDialogProps<TCreateDto> {
@@ -28,7 +29,7 @@ export interface CreateDialogProps<TCreateDto> {
     createEntity: (createData: TCreateDto) => Promise<void>
 }
 
-export const CreateDialogContext = createContext({
+export const CreateDialogContext = createContext<CreateDialogProps<any>>({
     isOpen: false,
     close: () => { return; },
     createEntity: async (_obj: any) => { return; },
@@ -38,12 +39,12 @@ export interface EditDialogProps<TExtendedDto, TUpdateDto> {
     isOpen: boolean;
     close: () => void;
     editEntity: (id: number, updateData: TUpdateDto) => Promise<void>;
-    useEntityExtended: (id: number) =>  UseQueryResult<TExtendedDto, Error>
+    useEntityExtended: (id: number) => UseQueryResult<TExtendedDto, Error>
     targetEntityId: number;
 }
 
 const a: any = 5
-export const EditDialogContext = createContext({
+export const EditDialogContext = createContext<EditDialogProps<any, any>>({
     isOpen: false,
     close: () => { return; },
     editEntity: async (_id: number, _obj: any) => { return; },
@@ -54,14 +55,28 @@ export const EditDialogContext = createContext({
 export interface DetailDialogProps<TExtendedDto> {
     isOpen: boolean;
     close: () => void;
-    useEntityExtended: (id: number) =>  UseQueryResult<TExtendedDto, Error>
+    useEntityExtended: (id: number) => UseQueryResult<TExtendedDto, Error>
     targetEntityId: number;
 }
 
-export const DetailDialogContext = createContext({
+export const DetailDialogContext = createContext<DetailDialogProps<any>>({
     isOpen: false,
     close: () => { return; },
     useEntityExtended: (_id: number) => a,
+    targetEntityId: -1
+});
+
+export interface DeleteDialogProps<TDto> {
+    isOpen: boolean;
+    close: () => void;
+    deleteEntity: (id: number) => Promise<void>;
+    targetEntityId: number;
+}
+
+export const DeleteDialogContext = createContext<DeleteDialogProps<any>>({
+    isOpen: false,
+    close: () => { return; },
+    deleteEntity: async (_id: number) => { return; },
     targetEntityId: -1
 });
 
@@ -69,7 +84,7 @@ export const DetailDialogContext = createContext({
  * CursorPaginatedDataGrid bere 4 typove parametry - Obycejne DTO, Extended DTO, Create DTO a Update DTO.
  * Props parametry:
  *
- * - useEntitesHook - hook na fetchovaní po dávkách pomocí kurzorové paginace
+ * - useEntitiesHook - hook na fetchovaní po dávkách pomocí kurzorové paginace
  * - useEntityHook - hook, ktery vraci EXTENDED entitu pod urcitym ID
  * - useCreateEntityHook - hook, ktery vytvori entitu (bere TCreateDto jako parametr)
  * - useDeleteEntityHook - hook, ktery smaze entitu pod urcitym ID
@@ -78,19 +93,23 @@ export const DetailDialogContext = createContext({
  * - pak nasleduji dialogy na vytvareni, mazani a upravu
  */
 const CursorPaginatedDataGrid = <TDto extends BaseModelId & GridValidRowModel, TExtendedDto, TCreateDto, TUpdateDto>(props: CursorPaginatedDataGridProps<TDto, TExtendedDto, TCreateDto, TUpdateDto>) => {
-    const {useEntitesHook, useEntityHook, useCreateEntityHook, useUpdateEntityHook, useDeleteEntityHook, columns, createDialog, editDialog, detailDialog} = props
+    const { useEntitiesHook, useEntityHook, useCreateEntityHook, useUpdateEntityHook, useDeleteEntityHook, columns, createDialog, editDialog, detailDialog, deleteDialog } = props
 
     const createMutation = useCreateEntityHook();
     const updateMutation = useUpdateEntityHook();
     const deleteMutation = useDeleteEntityHook();
-    const { data, fetchNextPage, hasNextPage, isFetching} = useEntitesHook();
+    const { data, fetchNextPage, hasNextPage, isFetching } = useEntitiesHook();
 
     const handleCreate = async (createData: TCreateDto) => {
         await createMutation.mutateAsync(createData)
     }
 
     const handleEdit = async (id: number, updateData: TUpdateDto) => {
-        await updateMutation.mutateAsync({id, updateData});
+        await updateMutation.mutateAsync({ id, updateData });
+    };
+
+    const handleDelete = async (id: number) => {
+        await deleteMutation.mutateAsync(id);
     };
 
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -117,6 +136,15 @@ const CursorPaginatedDataGrid = <TDto extends BaseModelId & GridValidRowModel, T
         close: () => setIsDetailDialogOpen(false),
         useEntityExtended: useEntityHook,
         targetEntityId: detailEntityId,
+    };
+
+    const [deleteEntityId, setDeleteEntityId] = useState<number>(-1);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const deleteDialogProps = {
+        isOpen: isDeleteDialogOpen,
+        close: () => setIsDeleteDialogOpen(false),
+        deleteEntity: handleDelete,
+        targetEntityId: deleteEntityId,
     };
 
     const buttonColumns = [{
@@ -161,7 +189,10 @@ const CursorPaginatedDataGrid = <TDto extends BaseModelId & GridValidRowModel, T
             <Button
                 variant="contained"
                 color="error"
-                onClick={() => deleteMutation.mutate((params.row as TDto).id)}
+                onClick={() => {
+                    setDeleteEntityId((params.row as TDto).id);
+                    setIsDeleteDialogOpen(true);
+                }}
             >
                 Delete
             </Button>
@@ -173,7 +204,7 @@ const CursorPaginatedDataGrid = <TDto extends BaseModelId & GridValidRowModel, T
         pageSize: GET_MANY_SIZE,
     });
 
-    const rows = React.useMemo( () => {
+    const rows = React.useMemo(() => {
         return data?.pages[paginationModel.page] ?? []
     }, [paginationModel, data])
 
@@ -193,8 +224,6 @@ const CursorPaginatedDataGrid = <TDto extends BaseModelId & GridValidRowModel, T
     };
 
     const paginationMetaRef = React.useRef<GridPaginationMeta>();
-    // Memoize to avoid flickering when the `hasNextPage` is `undefined` during refetch
-    // paginationMeta = whether next page is available
     const paginationMeta = React.useMemo(() => {
         if (paginationMetaRef.current?.hasNextPage !== hasNextPage) {
             paginationMetaRef.current = { hasNextPage };
@@ -238,6 +267,9 @@ const CursorPaginatedDataGrid = <TDto extends BaseModelId & GridValidRowModel, T
             <DetailDialogContext.Provider value={detailDialogProps}>
                 {detailDialog}
             </DetailDialogContext.Provider>
+            <DeleteDialogContext.Provider value={deleteDialogProps}>
+                {deleteDialog}
+            </DeleteDialogContext.Provider>
         </div>
     );
 };
