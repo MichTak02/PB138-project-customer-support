@@ -231,7 +231,7 @@ export const voiceCommunicationRepository = {
             if (!cursorId) {
                 const comms = await prisma.voiceCommunication.findMany({
                     take: READ_MANY_TAKE,
-                    orderBy: { id: 'asc' },
+                    orderBy: { start: 'desc' },
                     where: filter
                 });
 
@@ -242,7 +242,7 @@ export const voiceCommunicationRepository = {
                 take: READ_MANY_TAKE,
                 skip: 1,
                 cursor: { id: cursorId },
-                orderBy: { id: 'asc' },
+                orderBy: { start: 'desc' },
                 where: filter
             });
             return Result.ok(comms.map(u => voiceCommunicationModelToVoiceCommunicationDto(u)));
@@ -261,7 +261,7 @@ export const voiceCommunicationRepository = {
             if (!cursorId) {
                 const comms = await prisma.voiceCommunication.findMany({
                     take: READ_MANY_TAKE,
-                    orderBy: { id: 'asc' },
+                    orderBy: { start: 'desc' },
                     include: includeObj,
                     where: filter
                 });
@@ -273,7 +273,7 @@ export const voiceCommunicationRepository = {
                 take: READ_MANY_TAKE,
                 skip: 1,
                 cursor: { id: cursorId },
-                orderBy: { id: 'asc' },
+                orderBy: { start: 'desc' },
                 include: includeObj,
                 where: filter
             });
