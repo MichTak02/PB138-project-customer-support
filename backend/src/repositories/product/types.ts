@@ -1,12 +1,13 @@
-import { Product, Category } from "@prisma/client";
-import { BaseModelId } from "../types";
-import { CategoryDto } from "../category/types";
+import {Product, Category} from "@prisma/client";
+import {BaseModelId} from "../types";
+import {CategoryDto} from "../category/types";
 
 export type ProductWithCategories = Product & {
     categories: Category[],
 }
 
 export type Type = "PRODUCT" | "SERVICE";
+
 export enum TypeValues {
     PRODUCT = "PRODUCT",
     SERVICE = "SERVICE"
@@ -27,4 +28,4 @@ export type ProductExtendedDto = Omit<ProductDto, "categoryIds"> & {
     categories: CategoryDto[],
 }
 
-export type ProductFilters = Partial<ProductCreateDto>;
+export type ProductFilters = Partial<Omit<ProductCreateDto, "price"> & { minPrice: number, maxPrice: number }>;
