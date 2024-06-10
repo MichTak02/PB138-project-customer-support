@@ -47,14 +47,3 @@ export const useUpdateChatCommunication = () => {
         },
     });
 };
-
-
-// export const useDeleteCategory = () => {
-//     const queryClient = useQueryClient();
-//     return useMutation({
-//         mutationFn: (id: number) => chatCommunicationsApi.delete(id),
-//         onSuccess: () => {
-//             queryClient.invalidateQueries({queryKey: ['categories']});
-//         },
-//     });
-// };
