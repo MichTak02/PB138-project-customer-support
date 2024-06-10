@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography } from '@mui/material';
 import { DeleteDialogProps, DeleteDialogContext } from "../../dataDisplay/CursorPaginatedDataGrid.tsx";
 import { CustomerDto } from "../../../models/customer.ts";
@@ -19,6 +19,12 @@ const DeleteCustomerDialog = () => {
             }
         }
     };
+
+    useEffect(() => {
+        if (!isOpen) {
+            setError(null);
+        }
+    }, [isOpen]);
 
     return (
         <Dialog open={isOpen} onClose={close}>
