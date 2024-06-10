@@ -23,7 +23,8 @@ export const getUsersRequestSchema = z.object({
         cursor: z.coerce.number().optional(),
         email: z.string().email().optional(),
         displayName: z.string().min(1).max(255).optional(),
-        createdOn: z.coerce.date().optional(),
+        minCreatedOn: z.coerce.date().optional(),
+        maxCreatedOn: z.coerce.date().optional(),
         role: z.enum([RoleValues.REGULAR, RoleValues.ADMIN]).optional(),
     }),
 });
