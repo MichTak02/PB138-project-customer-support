@@ -10,8 +10,6 @@ const DetailProductDialog: React.FC = () => {
     const { isOpen, close, useEntityExtended, targetEntityId }: DetailDialogProps<ProductDto> = useContext(DetailDialogContext);
     const { data: productExtendedDto, isLoading, error } = useEntityExtended(targetEntityId);
 
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error loading product data</div>;
 
     return (
         <Dialog open={isOpen} onClose={close} maxWidth="md" fullWidth>

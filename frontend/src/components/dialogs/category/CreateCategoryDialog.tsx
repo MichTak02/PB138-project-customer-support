@@ -26,12 +26,15 @@ const CreateCategoryDialog = () => {
     }
 
     return (
-        <Dialog open={isOpen} onClose={close}>
+        <Dialog open={isOpen} onClose={close}  maxWidth="sm" fullWidth>
             <DialogTitle>Add Category</DialogTitle>
             <DialogContent>
-                <Box component={FormGroup} mb={3}>
+                <Box component={FormGroup} mb={3} sx={{ mt: 2 }}>
                     <TextField
                         label="Category name"
+                        InputLabelProps={{ shrink: true }}
+                        variant="outlined"
+                        fullWidth
                         {...register("name")}
                         error={typeof errors.name !== 'undefined'}
                         helperText={errors.name?.message}

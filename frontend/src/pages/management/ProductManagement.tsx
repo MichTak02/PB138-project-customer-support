@@ -17,7 +17,6 @@ const ProductManagement: React.FC = () => {
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 70 },
         { field: 'name', headerName: 'Name', width: 200 },
-        { field: 'description', headerName: 'Description', width: 400 },
         { field: 'price', headerName: 'Price', width: 100 },
         { field: 'type', headerName: 'Type', width: 100 },
         {

@@ -10,9 +10,6 @@ const DetailCategoryDialog: React.FC = () => {
     const {isOpen, close, useEntityExtended, targetEntityId}: DetailDialogProps<CategoryDto> = useContext(DetailDialogContext);
     const {data: categoryExtendedDto, isLoading, error} = useEntityExtended(targetEntityId);
 
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error loading category data</div>;
-
     return (
         <Dialog open={isOpen} onClose={close} maxWidth="md" fullWidth>
             <DialogTitle>Category Detail</DialogTitle>

@@ -70,6 +70,8 @@ const CreateProductDialog = () => {
                 <Box component={FormGroup} mb={3} sx={{ '& .MuiTextField-root': { marginBottom: '16px' } }}>
                     <TextField
                         label="Product name"
+                        InputLabelProps={{ shrink: true }}
+                        variant="outlined"
                         fullWidth
                         {...register("name")}
                         error={typeof errors.name !== 'undefined'}
@@ -77,6 +79,8 @@ const CreateProductDialog = () => {
                     />
                     <TextField
                         label="Description"
+                        InputLabelProps={{ shrink: true }}
+                        variant="outlined"
                         fullWidth
                         {...register("description")}
                         error={typeof errors.description !== 'undefined'}
@@ -84,6 +88,8 @@ const CreateProductDialog = () => {
                     />
                     <TextField
                         label="Price"
+                        InputLabelProps={{ shrink: true }}
+                        variant="outlined"
                         fullWidth
                         type="number"
                         {...register("price", { valueAsNumber: true })}

@@ -7,12 +7,12 @@ import { ProductDto, ProductUpdateDto } from "../../../models/product.ts";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { editProductSchema } from "../../../validationSchemas/forms.ts";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormGroup, TextField, Select, MenuItem, FormControl, InputLabel, Checkbox, ListItemText, CircularProgress } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormGroup, TextField, FormControl, InputLabel, Checkbox, FormControlLabel, ListItemText, CircularProgress, Select, MenuItem} from "@mui/material";
 import { useCategories } from "../../../hooks/useCategories";
 
 const EditProductDialog: React.FC = () => {
     const { isOpen, close, editEntity, useEntityExtended, targetEntityId }: EditDialogProps<ProductDto, ProductUpdateDto> = useContext(EditDialogContext);
-    const { handleSubmit, formState: { errors }, register, setValue, control } = useForm<ProductUpdateDto>({
+    const { handleSubmit, formState: { errors }, register, setValue, control, watch } = useForm<ProductUpdateDto>({
         resolver: zodResolver(editProductSchema),
     });
 
@@ -35,6 +35,12 @@ const EditProductDialog: React.FC = () => {
             setValue("categoryIds", product.categoryIds);
         }
     }, [product, setValue]);
+
+    const selectedType = watch('type');
+
+    const handleTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue('type', event.target.value);
+    };
 
     const onUpdateProduct = async (data: ProductUpdateDto) => {
         await editEntity(targetEntityId, data);
@@ -68,6 +74,8 @@ const EditProductDialog: React.FC = () => {
                 <Box component={FormGroup} mb={3} sx={{ '& > *': { marginBottom: 2 } }}>
                     <TextField
                         label="Product name"
+                        InputLabelProps={{ shrink: true }}
+                        variant="outlined"
                         fullWidth
                         {...register("name")}
                         error={!!errors.name}
@@ -75,6 +83,8 @@ const EditProductDialog: React.FC = () => {
                     />
                     <TextField
                         label="Description"
+                        InputLabelProps={{ shrink: true }}
+                        variant="outlined"
                         fullWidth
                         multiline
                         minRows={3}
@@ -84,28 +94,38 @@ const EditProductDialog: React.FC = () => {
                     />
                     <TextField
                         label="Price"
+                        InputLabelProps={{ shrink: true }}
+                        variant="outlined"
                         fullWidth
                         type="number"
                         {...register("price", { valueAsNumber: true })}
                         error={!!errors.price}
                         helperText={errors.price?.message}
                     />
-                    <FormControl fullWidth error={!!errors.type} sx={{ marginBottom: 2 }}>
-                        <InputLabel id="type-label">Type</InputLabel>
-                        <Controller
-                            control={control}
-                            name="type"
-                            render={({ field }) => (
-                                <Select
-                                    labelId="type-label"
-                                    {...field}
-                                    value={field.value ?? 'PRODUCT'}
-                                >
-                                    <MenuItem value="PRODUCT">Product</MenuItem>
-                                    <MenuItem value="SERVICE">Service</MenuItem>
-                                </Select>
-                            )}
-                        />
+                    <FormControl component="fieldset" error={!!errors.type}>
+                        <InputLabel component="legend">Type</InputLabel>
+                        <FormGroup row>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={selectedType === 'PRODUCT'}
+                                        onChange={handleTypeChange}
+                                        value="PRODUCT"
+                                    />
+                                }
+                                label="Product"
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={selectedType === 'SERVICE'}
+                                        onChange={handleTypeChange}
+                                        value="SERVICE"
+                                    />
+                                }
+                                label="Service"
+                            />
+                        </FormGroup>
                         {errors.type && <p>{errors.type.message}</p>}
                     </FormControl>
                     <FormControl fullWidth error={!!errors.categoryIds} sx={{ marginBottom: 2 }}>

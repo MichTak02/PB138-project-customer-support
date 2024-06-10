@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
     Dialog,
     DialogActions,
@@ -7,61 +7,56 @@ import {
     Button,
     TextField,
     FormGroup,
-    Box
+    Box,
+    FormControl,
+    InputLabel,
 } from '@mui/material';
-import {CategoryDto, CategoryUpdateDto} from '../../../models/category.ts';
-import {EditDialogContext, EditDialogProps} from "../../dataDisplay/CursorPaginatedDataGrid.tsx";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {editCategorySchema} from "../../../validationSchemas/forms.ts";
+import { CategoryDto, CategoryUpdateDto } from '../../../models/category.ts';
+import { EditDialogContext, EditDialogProps } from "../../dataDisplay/CursorPaginatedDataGrid.tsx";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { editCategorySchema } from "../../../validationSchemas/forms.ts";
 
 const EditCategoryDialog: React.FC = () => {
-    // EditDialogProps bere 2 typove parametry - extended verze a update verze objektu
-    // !!DULEZITE - zde se pouziva jako extended normalni verze (tj. CategoryDto) proto, ze Category NEMA extended verzi.
-    // U jinych entit ale pouzivejte vzdycky extended verzi
-    // useEntityExtended = hook, ktery po zavolani vrati extended verzi entity
-    // targetEntityId = id entity, kterou editujeme
-    const {isOpen, close, editEntity, useEntityExtended, targetEntityId}: EditDialogProps<CategoryDto, CategoryUpdateDto> = useContext(EditDialogContext);
-    const {data: categoryExtendedDto} = useEntityExtended(targetEntityId);
+    const { isOpen, close, editEntity, useEntityExtended, targetEntityId }: EditDialogProps<CategoryDto, CategoryUpdateDto> = useContext(EditDialogContext);
+    const { data: categoryExtendedDto } = useEntityExtended(targetEntityId);
 
-    const {
-        handleSubmit, formState: {errors}, register
-    } = useForm<CategoryUpdateDto>({
+    const { handleSubmit, formState: { errors }, register, setValue } = useForm<CategoryUpdateDto>({
         resolver: zodResolver(editCategorySchema),
-        values: categoryExtendedDto,
-    })
+    });
+
+    useEffect(() => {
+        if (categoryExtendedDto) {
+            setValue("name", categoryExtendedDto.name);
+        }
+    }, [categoryExtendedDto, setValue]);
 
     const onEditCategory = async (data: CategoryUpdateDto) => {
-        await editEntity(targetEntityId , data);
+        await editEntity(targetEntityId, data);
         close();
-    }
+    };
 
     return (
-        <Dialog open={isOpen} onClose={close}>
+        <Dialog open={isOpen} onClose={close} maxWidth="sm" fullWidth>
             <DialogTitle>Edit Category</DialogTitle>
             <DialogContent>
-                <Box component={FormGroup} mb={3}>
-                    <TextField
-                        value={targetEntityId}
-                        label="ID"
-                        disabled={true}
-                    ></TextField>
-                </Box>
-
-                <Box component={FormGroup} mb={3}>
-                    <TextField
-                        label="Category name"
-                        {...register("name")}
-                        error={typeof errors.name !== 'undefined'}
-                        helperText={errors.name?.message}
-                    />
+                <Box component={FormGroup} mb={3} sx={{ mt: 2 }}>
+                    <FormControl fullWidth variant="outlined">
+                        <TextField
+                            label="Category name"
+                            InputLabelProps={{ shrink: true }}
+                            variant="outlined"
+                            fullWidth
+                            {...register("name")}
+                            error={!!errors.name}
+                            helperText={errors.name?.message}
+                        />
+                    </FormControl>
                 </Box>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleSubmit(onEditCategory)}>OK</Button>
-                <Button onClick={close} color="error">
-                    Cancel
-                </Button>
+                <Button onClick={handleSubmit(onEditCategory)} color="primary">OK</Button>
+                <Button onClick={close} color="error">Cancel</Button>
             </DialogActions>
         </Dialog>
     );
