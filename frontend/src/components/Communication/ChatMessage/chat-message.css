@@ -6,11 +6,11 @@
 }
 
 .chat-message--sent {
-    margin-right: auto;
+    margin-left: auto;
 }
 
 .chat-message--received {
-    margin-left: auto;
+    margin-right: auto;
 }
 
 .chat-message-text {
@@ -20,13 +20,14 @@
 }
 
 .chat-message-text--sent {
-    background-color: lightgray;
-    color: black;
+    background-color: var(--blue);
+    color: white;
+    margin-left: auto;
 }
 
 .chat-message-text--received {
-    background-color: var(--blue);
-    color: white;
+    background-color: lightgray;
+    color: black;
 }
 
 .chat-message-date {
