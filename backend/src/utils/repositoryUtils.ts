@@ -13,6 +13,9 @@ export const handleRepositoryErrors = (e: unknown) => {
             return Result.err(new NotFoundError(e.message));
         }
     }
+    else if (e instanceof Error) {
+        return Result.err(e)
+    }
 
     return Result.err(new InternalError());
 }

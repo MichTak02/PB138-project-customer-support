@@ -77,6 +77,9 @@ export function Register() {
                 </Button>
             </Box>
             {isError && <Typography color="error" sx={{ mt: 2 }}>Registration failed. Please try again.</Typography>}
+            <Typography color="blue" sx={{ mt: 2 }} onClick={() => navigate("/login")}>
+                Already have an account? Click here to login!
+            </Typography>
         </Page>
     );
 }

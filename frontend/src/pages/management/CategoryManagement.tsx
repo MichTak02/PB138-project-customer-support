@@ -23,9 +23,6 @@ const CategoryManagement: React.FC = () => {
 
     return (
         <Page title="Category Management">
-            <Typography component="h1" variant="h5">
-                Category Management
-            </Typography>
             <CursorPaginatedDataGrid<CategoryDto, CategoryDto, CategoryCreateDto, CategoryUpdateDto>
                 columns={columns}
                 createDialog={<CreateCategoryDialog />}
