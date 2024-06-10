@@ -15,6 +15,7 @@ import {useTheme} from '@mui/material/styles';
 import useLogout from "../../hooks/useLogout.ts";
 import {useState} from "react";
 import DensityMediumIcon from '@mui/icons-material/DensityMedium';
+import useAuth from "../../hooks/useAuth.ts";
 
 const pathAndTitle: Record<string, string> = {
     'dashboard': 'Dashboard',
@@ -35,6 +36,7 @@ export function Navbar() {
 
     const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const {auth} = useAuth();
 
     const toggleDrawer = (open: boolean) => () => {
         setDrawerOpen(open);
@@ -64,6 +66,7 @@ export function Navbar() {
                                 <DensityMediumIcon />
                             </IconButton>
                             <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)} >
+                                <Typography sx={{m: 2}}> Logged as {auth?.displayName} ({auth?.email})</Typography>
                                 <List>
                                     {menuItems}
                                     <ListItemButton component={Link} to="/login" onClick={handleLogout}>
@@ -73,27 +76,30 @@ export function Navbar() {
                             </Drawer>
                         </>
                     ) : (
-                        <ButtonGroup variant="text" color="inherit">
-                            {Object.keys(pathAndTitle).map((path) => (
-                                <Button
-                                    key={path}
-                                    component={NavLink}
-                                    to={path}
-                                    sx={{
-                                        px: 3,
-                                        '&.active': {
-                                            backgroundColor: theme.palette.primary.dark,
-                                            color: theme.palette.primary.contrastText,
-                                        },
-                                    }}
-                                >
-                                    {pathAndTitle[path]}
+                        <>
+                            <ButtonGroup variant="text" color="inherit">
+                                {Object.keys(pathAndTitle).map((path) => (
+                                    <Button
+                                        key={path}
+                                        component={NavLink}
+                                        to={path}
+                                        sx={{
+                                            px: 3,
+                                            '&.active': {
+                                                backgroundColor: theme.palette.primary.dark,
+                                                color: theme.palette.primary.contrastText,
+                                            },
+                                        }}
+                                    >
+                                        {pathAndTitle[path]}
+                                    </Button>
+                                ))}
+                                <Button onClick={handleLogout} color="inherit" component={Link} to="/login">
+                                    Log Out
                                 </Button>
-                            ))}
-                            <Button onClick={handleLogout} color="inherit" component={Link} to="/login">
-                                Log Out
-                            </Button>
-                        </ButtonGroup>
+                            </ButtonGroup>
+                            <Typography sx={{m: 2}}> Logged as {auth?.displayName} ({auth?.email})</Typography>
+                        </>
                     )}
                 </Toolbar>
             </Container>
