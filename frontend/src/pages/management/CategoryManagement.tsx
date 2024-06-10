@@ -7,7 +7,6 @@ import {
     useCreateCategory, useDeleteCategory, useUpdateCategory/*, useCreateCategory, useUpdateCategory, useDeleteCategory*/
 } from '../../hooks/useCategories.ts';
 import Page from "../../components/base/Page.tsx";
-import {Typography} from "@mui/material";
 import CursorPaginatedDataGrid from "../../components/dataDisplay/CursorPaginatedDataGrid.tsx";
 import {CategoryCreateDto, CategoryDto, CategoryUpdateDto} from "../../models/category.ts";
 import CreateCategoryDialog from "../../components/dialogs/CreateCategoryDialog.tsx";
@@ -23,9 +22,6 @@ const CategoryManagement: React.FC = () => {
 
     return (
         <Page title="Category Management">
-            <Typography component="h1" variant="h5">
-                Category Management
-            </Typography>
             <CursorPaginatedDataGrid<CategoryDto, CategoryDto, CategoryCreateDto, CategoryUpdateDto>
                 columns={columns} createDialog={<CreateCategoryDialog/>} editDialog={<EditCategoryDialog/>}
                 detailDialog={<DetailCategoryDialog/>} useEntityHook={useCategory} useEntitesHook={useCategories}
