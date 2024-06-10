@@ -80,10 +80,17 @@ export const customerRepository = {
         try {
             const customers = await prisma.customer.findMany({
                 where: {
-                    id: {
-                        in: productIds
-                    }
-                }
+                    products: {
+                      some: {
+                        id: {
+                          in: productIds,
+                        },
+                      },
+                    },
+                  },
+                  select: {
+                    email: true,
+                  },
             })
             return Result.ok(customers.map(customer => customer.email));
         } catch (error) {
