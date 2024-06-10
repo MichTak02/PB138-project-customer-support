@@ -80,6 +80,7 @@ const EditProductDialog: React.FC = () => {
                         {...register("name")}
                         error={!!errors.name}
                         helperText={errors.name?.message}
+                        sx={{ mt: 2 }}
                     />
                     <TextField
                         label="Description"
@@ -91,6 +92,7 @@ const EditProductDialog: React.FC = () => {
                         {...register("description")}
                         error={!!errors.description}
                         helperText={errors.description?.message}
+                        sx={{ mt: 2 }}
                     />
                     <TextField
                         label="Price"
@@ -101,8 +103,9 @@ const EditProductDialog: React.FC = () => {
                         {...register("price", { valueAsNumber: true })}
                         error={!!errors.price}
                         helperText={errors.price?.message}
+                        sx={{ mt: 2 }}
                     />
-                    <FormControl component="fieldset" error={!!errors.type}>
+                    <FormControl sx={{ mt: 2 }} component="fieldset" error={!!errors.type}>
                         <InputLabel component="legend">Type</InputLabel>
                         <FormGroup row>
                             <FormControlLabel

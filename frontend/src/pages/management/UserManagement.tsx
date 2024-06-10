@@ -15,7 +15,6 @@ const UserManagement: React.FC = () => {
         { field: 'email', headerName: 'Email', width: 200 },
         { field: 'displayName', headerName: 'Display Name', width: 200 },
         { field: 'role', headerName: 'Role', width: 150 },
-        { field: 'createdOn', headerName: 'Created On', width: 200 },
     ];
 
     return (

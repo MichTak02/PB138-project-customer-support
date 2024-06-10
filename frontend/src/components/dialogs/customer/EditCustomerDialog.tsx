@@ -62,9 +62,6 @@ const EditCustomerDialog: React.FC = () => {
         close();
     };
 
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error loading customer data</div>;
-
     const sortedProducts = products?.pages.flatMap(page => page).sort((a, b) => a.name.localeCompare(b.name)) || [];
 
     return (
@@ -74,33 +71,45 @@ const EditCustomerDialog: React.FC = () => {
                 <Box component={FormGroup} mb={3} sx={{ '& > *': { marginBottom: 2 } }}>
                     <TextField
                         label="Name"
+                        InputLabelProps={{ shrink: true }}
+                        variant="outlined"
                         fullWidth
                         {...register("name")}
                         error={!!errors.name}
                         helperText={errors.name?.message}
+                        sx={{ mt: 2 }}
                     />
                     <TextField
                         label="Surname"
+                        InputLabelProps={{ shrink: true }}
+                        variant="outlined"
                         fullWidth
                         {...register("surname")}
                         error={!!errors.surname}
                         helperText={errors.surname?.message}
+                        sx={{ mt: 2 }}
                     />
                     <TextField
                         label="Email"
+                        InputLabelProps={{ shrink: true }}
+                        variant="outlined"
                         fullWidth
                         {...register("email")}
                         error={!!errors.email}
                         helperText={errors.email?.message}
+                        sx={{ mt: 2 }}
                     />
                     <TextField
                         label="Phone Number"
+                        InputLabelProps={{ shrink: true }}
+                        variant="outlined"
                         fullWidth
                         {...register("phoneNumber")}
                         error={!!errors.phoneNumber}
                         helperText={errors.phoneNumber?.message}
+                        sx={{ mt: 2 }}
                     />
-                    <FormControl fullWidth error={!!errors.productIds}>
+                    <FormControl sx={{ mt: 2 }} fullWidth error={!!errors.productIds}>
                         <InputLabel id="product-label">Products</InputLabel>
                         <Controller
                             control={control}
