@@ -9,6 +9,10 @@ import {GET_MANY_SIZE} from "../../api/apiService.ts";
 import {InfiniteData, UseInfiniteQueryResult, UseMutationResult, UseQueryResult} from "@tanstack/react-query";
 import {Button} from "@mui/material";
 import {BaseModelId} from "../../models/base.ts";
+import useAuth from "../../hooks/useAuth.ts";
+import {RoleValues} from "../../models/user.ts";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import Authorized from "../auth/Authorized.tsx";
 
 type CursorPaginatedDataGridProps<TDto, TExtendedDto, TCreateDto, TUpdateDto> = {
     useEntitesHook: () => UseInfiniteQueryResult<InfiniteData<TDto[], unknown>, Error>
@@ -84,6 +88,7 @@ const CursorPaginatedDataGrid = <TDto extends BaseModelId & GridValidRowModel, T
     const updateMutation = useUpdateEntityHook();
     const deleteMutation = useDeleteEntityHook();
     const { data, fetchNextPage, hasNextPage, isFetching} = useEntitesHook();
+    const {auth} = useAuth();
 
     const handleCreate = async (createData: TCreateDto) => {
         await createMutation.mutateAsync(createData)
@@ -142,6 +147,7 @@ const CursorPaginatedDataGrid = <TDto extends BaseModelId & GridValidRowModel, T
         width: 150,
         renderCell: (params: GridRenderCellParams) => (
             <Button
+                disabled={auth?.role !== RoleValues.ADMIN}
                 variant="contained"
                 color="secondary"
                 onClick={() => {
@@ -159,6 +165,7 @@ const CursorPaginatedDataGrid = <TDto extends BaseModelId & GridValidRowModel, T
         width: 150,
         renderCell: (params: GridRenderCellParams) => (
             <Button
+                disabled={auth?.role !== RoleValues.ADMIN}
                 variant="contained"
                 color="error"
                 onClick={() => deleteMutation.mutate((params.row as TDto).id)}
@@ -210,10 +217,12 @@ const CursorPaginatedDataGrid = <TDto extends BaseModelId & GridValidRowModel, T
     }, [paginationMeta?.hasNextPage, totalRowCount]);
 
     return (
-        <div style={{ height: '100%', width: '100%' }}>
-            <Button variant="contained" color="primary" onClick={() => setIsCreateDialogOpen(true)}>
-                Add
-            </Button>
+        <>
+            <Authorized role={RoleValues.ADMIN}>
+                <Button startIcon={<AddCircleIcon />} variant="contained" color="primary" onClick={() => setIsCreateDialogOpen(true)} fullWidth sx={{mb: 2}}>
+                    Add
+                </Button>
+            </Authorized>
             <DataGrid
                 rows={rows}
                 columns={columns.concat(buttonColumns)}
@@ -238,7 +247,7 @@ const CursorPaginatedDataGrid = <TDto extends BaseModelId & GridValidRowModel, T
             <DetailDialogContext.Provider value={detailDialogProps}>
                 {detailDialog}
             </DetailDialogContext.Provider>
-        </div>
+        </>
     );
 };
 
