@@ -41,7 +41,7 @@ export const updateOfferSchema = z.object({
       productId: z.coerce.number(),
       productQuantity: z.coerce.number(),
       newPrice: z.coerce.number(),
-  })),
+  })).optional(),
   }),
 });
 
