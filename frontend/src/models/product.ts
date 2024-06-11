@@ -17,7 +17,7 @@ export type ProductExtendedDto = Omit<ProductDto, 'categoryIds'> & {
     categories: CategoryDto[];
 }
 
-export type ProductFilters = Partial<ProductDto>;
+export type ProductFilters = Partial<Omit<ProductCreateDto, "price"> & { id: number, minPrice: number, maxPrice: number }>;
 
 export type ProductDeleteResponse = {
     success: boolean;
