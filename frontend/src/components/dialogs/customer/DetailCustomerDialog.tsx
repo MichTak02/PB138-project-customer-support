@@ -15,7 +15,15 @@ const DetailCustomerDialog: React.FC = () => {
 
     const handleViewVoiceRecords = () => {
         if (userId && targetEntityId) {
-            navigate(`/auth/customers/records/${userId}/${targetEntityId}`);
+            navigate(`/auth/customers/voice-records/${userId}/${targetEntityId}`);
+        } else {
+            alert('User ID or Customer ID is missing.');
+        }
+    };
+
+    const handleViewChatRecords = () => {
+        if (userId && targetEntityId) {
+            navigate(`/auth/customers/chat-records/${userId}/${targetEntityId}`);
         } else {
             alert('User ID or Customer ID is missing.');
         }
@@ -57,6 +65,7 @@ const DetailCustomerDialog: React.FC = () => {
             </DialogContent>
             <DialogActions>
                 <Button color="primary" onClick={close}>Close</Button>
+                <Button color="secondary" onClick={handleViewVoiceRecords}>View Chat Records</Button>
                 <Button color="secondary" onClick={handleViewVoiceRecords}>View Voice Records</Button>
             </DialogActions>
         </Dialog>
