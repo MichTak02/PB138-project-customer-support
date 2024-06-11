@@ -5,6 +5,7 @@ import {handleRepositoryErrors, READ_MANY_TAKE} from "../../utils/repositoryUtil
 import {ProductCreateDto, ProductDto, ProductExtendedDto, ProductFilters, ProductUpdateDto} from "./types";
 import {productModelToProductDto, productModelToProductExtendedDto} from "./mappers";
 import {Prisma} from "@prisma/client";
+import { ConflictError } from "../../errors/errors";
 
 const productRepository = {
     async create(data: ProductCreateDto): DbResult<ProductDto> {
@@ -123,7 +124,7 @@ const productRepository = {
                         },
                     });
                     if (product.offerToProducts.length != 0) {
-                        throw new Error("Cannot delete product as it is used by some offers");
+                        throw new ConflictError("Cannot delete product as it is used by some offers");
                     }
                     const deletedProduct = await transaction.product.delete({
                         where: {id},

@@ -100,7 +100,7 @@ const CreateProductDialog = () => {
                         sx={{ mt: 2 }}
                     />
                     <FormControl sx={{ mt: 2 }} component="fieldset" error={typeof errors.type !== 'undefined'}>
-                        <InputLabel component="legend">Type</InputLabel>
+                        <InputLabel sx={{ mb: 2, position: 'relative' }}  component="legend">Type</InputLabel>
                         <FormGroup row>
                             <FormControlLabel
                                 control={
@@ -153,6 +153,21 @@ const CreateProductDialog = () => {
                                             <CircularProgress size={24} />
                                         </MenuItem>
                                     )}
+                                    <MenuItem>
+                                        <Button
+                                            onClick={() => {
+                                                const activeElement = document.activeElement;
+                                                if (activeElement instanceof HTMLElement) {
+                                                    activeElement.blur();
+                                                }
+                                            }}
+                                            fullWidth
+                                            color="primary"
+                                            sx={{ position: 'sticky', bottom: 0 }}
+                                        >
+                                            OK
+                                        </Button>
+                                    </MenuItem>
                                 </Select>
                             )}
                         />

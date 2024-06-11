@@ -1,26 +1,21 @@
 import Page from '../components/base/Page';
-import { Typography, List, ListItem, ListItemText, Divider, ListItemIcon } from '@mui/material';
+import { Typography, List, Card, CardMedia, CardContent } from '@mui/material';
 import { Link } from 'react-router-dom';
-import PeopleIcon from '@mui/icons-material/People';
-import PersonIcon from '@mui/icons-material/Person';
-import InventoryIcon from '@mui/icons-material/Inventory';
-import CategoryIcon from '@mui/icons-material/Category';
-import PercentIcon from '@mui/icons-material/Percent';
-import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
-import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+import userIcon from '../assets/user-icon.svg'
+import customerIcon from '../assets/customer-icon.svg'
+import productIcon from '../assets/product-icon.svg'
+import categoryIcon from '../assets/category-icon.svg'
+import offerIcon from '../assets/offer-icon.svg'
+import {RoleValues} from "../models/user.ts";
+import Authorized from "../components/auth/Authorized.tsx";
 
 export function Dashboard() {
   const items = [
-    { text: "User Management", link: "/auth/users", icon: <PeopleIcon /> },
-    { text: "Customer Management", link: "/auth/customers", icon: <PersonIcon /> },
-    { text: "Product Management", link: "/auth/products", icon: <InventoryIcon /> },
-    { text: "Category Management", link: "/auth/categories", icon: <CategoryIcon /> },
-    { text: "Offer Management", link: "/auth/offers", icon: <PercentIcon /> },
-  ];
-
-  const communications = [
-    { text: "Voice Communications", link: "/customers/:customerId/voice", icon: <KeyboardVoiceIcon /> },
-    { text: "Chat Communications", link: "/customers/:customerId/chat", icon: <ChatBubbleIcon /> },
+    { text: 'User Management', link: '/auth/users', image: userIcon, role: RoleValues.ADMIN },
+    { text: 'Customer Management', link: '/auth/customers', image: customerIcon, role: RoleValues.REGULAR },
+    { text: 'Product Management', link: '/auth/products', image: productIcon, role: RoleValues.REGULAR },
+    { text: 'Category Management', link: '/auth/categories', image: categoryIcon, role: RoleValues.REGULAR },
+    { text: 'Offer Management', link: '/auth/offers', image: offerIcon, role: RoleValues.REGULAR },
   ];
 
   return (
@@ -28,30 +23,23 @@ export function Dashboard() {
       <Typography component="h2" variant="h5" gutterBottom>
         Management
       </Typography>
-      <List>
+      <List style={{ display: "flex", flexWrap: "wrap", gap: "2rem" }}>
       {items.map((item, index) => (
-        <ListItem button component={Link} to={item.link} key={index}>
-          <ListItemIcon>
-            {item.icon}
-          </ListItemIcon>
-          <ListItemText primary={item.text} />
-        </ListItem>
-      ))}
-    </List>
-      
-      <Divider sx={{ my: 2 }} />
-
-      <Typography component="h2" variant="h5" gutterBottom>
-        Communications
-      </Typography>
-      <List>
-      {communications.map((communication, index) => (
-        <ListItem button component={Link} to={communication.link} key={index}>
-          <ListItemIcon>
-            {communication.icon}
-          </ListItemIcon>
-          <ListItemText primary={communication.text} />
-        </ListItem>
+          <Authorized role={item.role} key={index}>
+        <Card component={Link} to={item.link} style={{ textDecoration: "none", width: "20rem" }}>
+        <CardMedia
+          component="div"
+          style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "10rem" , padding: "1rem 0rem 0rem 0rem"}}
+        >
+          <img src={item.image} alt={item.text} style={{ maxHeight: "100%", maxWidth: "100%" }} />
+        </CardMedia>
+        <CardContent style={{ textAlign: "center" }}>
+          <Typography variant="h6" component="div">
+            {item.text}
+          </Typography>
+        </CardContent>
+      </Card>
+          </Authorized>
       ))}
     </List>
     </Page>
