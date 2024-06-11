@@ -12,7 +12,7 @@ const offerToProductsApi = new ApiService<OfferToProductDto, OfferToProductExten
 
 export const useOfferToProducts = (filter?: OfferToProductFilters) => {
     return useInfiniteQuery({
-        queryKey: ['offerToProducts'],
+        queryKey: ['offerToProducts', filter],
         queryFn: ({pageParam}) => offerToProductsApi.getMany(pageParam, filter),
         initialPageParam: 0,
         getNextPageParam: (lastPage, _pages) => lastPage.length === GET_MANY_SIZE ? lastPage[lastPage.length - 1].id : undefined,

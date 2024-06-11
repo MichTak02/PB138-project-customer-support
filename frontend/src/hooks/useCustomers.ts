@@ -12,7 +12,7 @@ const customersApi = new ApiService<CustomerDto, CustomerExtendedDto, CustomerCr
 
 export const useCustomers = (filter?: CustomerFilters) => {
     return useInfiniteQuery({
-        queryKey: ['customers'],
+        queryKey: ['customers', filter],
         queryFn: ({pageParam}) => customersApi.getMany(pageParam, filter),
         initialPageParam: 0,
         getNextPageParam: (lastPage, _pages) => lastPage.length === GET_MANY_SIZE ? lastPage[lastPage.length - 1].id : undefined,

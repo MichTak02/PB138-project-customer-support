@@ -13,7 +13,7 @@ const chatCommunicationsApi =
 
 export const useChatCommunications = (filter?: ChatCommunicationFilters) => {
     return useInfiniteQuery({
-        queryKey: ['chatCommunication'],
+        queryKey: ['chatCommunication', filter],
         queryFn: ({pageParam}) => chatCommunicationsApi.getMany(pageParam, filter),
         initialPageParam: 0,
         getNextPageParam: (lastPage, _pages) => lastPage.length === GET_MANY_SIZE ? lastPage[lastPage.length - 1].id : undefined,

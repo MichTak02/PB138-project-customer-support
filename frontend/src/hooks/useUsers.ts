@@ -12,7 +12,7 @@ const usersApi = new ApiService<UserDto, UserExtendedDto, UserCreateDto, UserUpd
 
 export const useUsers = (filter?: UserFilters) => {
     return useInfiniteQuery({
-        queryKey: ['users'],
+        queryKey: ['users', filter],
         queryFn: ({pageParam}) => usersApi.getMany(pageParam, filter),
         initialPageParam: 0,
         getNextPageParam: (lastPage, _pages) => lastPage.length === GET_MANY_SIZE ? lastPage[lastPage.length - 1].id : undefined,

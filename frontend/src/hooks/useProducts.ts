@@ -6,7 +6,7 @@ const productsApi = new ApiService<ProductDto, ProductDto, ProductCreateDto, Pro
 
 export const useProducts = (filter?: ProductFilters) => {
     return useInfiniteQuery({
-        queryKey: ['products'],
+        queryKey: ['products', filter],
         queryFn: ({ pageParam }) => productsApi.getMany(pageParam, filter),
         initialPageParam: 0,
         getNextPageParam: (lastPage, _pages) => lastPage.length === GET_MANY_SIZE ? lastPage[lastPage.length - 1].id : undefined,

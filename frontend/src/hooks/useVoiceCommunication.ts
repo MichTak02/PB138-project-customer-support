@@ -11,7 +11,7 @@ const voiceCommunicationsApi =
 
 export const useVoiceCommunications = (filter?: VoiceCommunicationFilters) => {
     return useInfiniteQuery({
-        queryKey: ['voiceCommunication'],
+        queryKey: ['voiceCommunication', filter],
         queryFn: ({pageParam}) => voiceCommunicationsApi.getMany(pageParam, filter),
         initialPageParam: 0,
         getNextPageParam: (lastPage, _pages) => lastPage.length === GET_MANY_SIZE ? lastPage[lastPage.length - 1].id : undefined,
