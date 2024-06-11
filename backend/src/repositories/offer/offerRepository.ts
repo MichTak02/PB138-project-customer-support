@@ -131,7 +131,6 @@ const offerRepository = {
                             },
                         });
                         for (const offerToProduct of offerToProducts) {
-                            {{}}
                             const otp = await transaction.offerToProduct.findFirst({
                                 where: {
                                     id: offerToProduct.id,
