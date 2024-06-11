@@ -115,43 +115,12 @@ const offerRepository = {
             const transactionResult = await prisma.$transaction(
                 async (transaction) => {
                     const {offerToProducts, ...offerData} = data;
-                    if (offerToProducts) {
-                        const existingToDelete = await transaction.offerToProduct.findMany({
-                            where: {
-                                id: {
-                                    notIn: offerToProducts.map(item => item.id),
-                                },
-                            },
-                        });
-                        await transaction.offerToProduct.deleteMany({
-                            where: {
-                                id: {
-                                    in: existingToDelete.map(item => item.id),
-                                },
-                            },
-                        });
-                        for (const offerToProduct of offerToProducts) {
-                            const otp = await transaction.offerToProduct.findFirst({
-                                where: {
-                                    id: offerToProduct.id,
-                                },
-                            });
-                            if (otp !== undefined) {
-                                await transaction.offerToProduct.update({
-                                    where: {
-                                        id: offerToProduct.id,
-                                    },
-                                    data: offerToProduct,
-                                });
-                            } else {
-                                const {id, ...data} = offerToProduct;
-                                await transaction.offerToProduct.create({
-                                    data: data,
-                                });
-                            }
-                        };
-                    }
-                    return await prisma.offer.update({
+                    await transaction.offerToProduct.deleteMany({
+                        where: {
+                            offerId: id,
+                        },
+                    });
+                    const offer = await transaction.offer.update({
                         where: {
                             id: id,
                         },
@@ -160,6 +129,16 @@ const offerRepository = {
                             offerToProducts: true,
                         },
                     });
+                    
+                    if (offerToProducts) {
+                        for (const offerToProduct of offerToProducts) {
+                            const otp = await transaction.offerToProduct.create({
+                                data: {offerId: id, ...offerToProduct},
+                            });
+                            offer.offerToProducts.push(otp);
+                        }
+                    }
+                    return offer;
                 },
                 {
                     timeout: 100000,
