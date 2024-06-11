@@ -35,7 +35,7 @@ export const VoiceRecordsHistory = (props: { participants: Participants }) => {
 
 
     return (
-            <Page title="Page">
+            <Page title="Voice records">
                 <div className="voice-records-history">
                     <div className="chat-heading">
                         <div className="chat-heading__name">{customerName}</div>

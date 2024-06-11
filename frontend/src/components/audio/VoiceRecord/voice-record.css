@@ -8,13 +8,13 @@
 }
 
 .voice-record--received {
-    margin-left: auto;
-    background-color: var(--light-gray);
+    margin-right: auto;
+    background-color: lightgray;
     color: black;
 }
 
 .voice-record--sent {
-    margin-right: auto;
+    margin-left: auto;
     background-color: var(--blue);
     color: white;
 }
