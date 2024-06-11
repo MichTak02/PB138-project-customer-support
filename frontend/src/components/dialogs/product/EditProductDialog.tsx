@@ -186,13 +186,6 @@ const EditProductDialog: React.FC = () => {
                         />
                         {errors.categoryIds && <p>{errors.categoryIds.message}</p>}
                     </FormControl>
-                    {product?.categoryIds && (
-                        <FormGroup row>
-                            <Typography variant="body1"><strong>Selected Categories: </strong>
-                                {sortedCategories.filter(category => product.categoryIds.includes(category.id)).map(category => category.name).join(', ')}
-                            </Typography>
-                        </FormGroup>
-                    )}
                 </Box>
                 <div ref={loadMoreRef} />
             </DialogContent>
