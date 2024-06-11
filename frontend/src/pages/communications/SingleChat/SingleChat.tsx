@@ -5,6 +5,7 @@ import {useChatCommunications} from "../../../hooks/useChatCommunication.ts";
 import {useCustomer} from "../../../hooks/useCustomers.ts";
 import {Button} from "@mui/material";
 import {useLayoutEffect, useMemo} from "react";
+import Page from "../../../components/base/Page.tsx";
 
 interface Participants {
     userId: number;
@@ -32,23 +33,26 @@ export const SingleChat = (props: { participants: Participants }) => {
     const customerEmail = customer?.email;
 
     return (
-        <div className="single-chat">
-            <div className="chat-heading">
-                <div className="chat-heading__name">{customerName}</div>
-                <div className="chat-heading__email">{customerEmail}</div>
+        <Page title="Chat communication">
+            <div className="single-chat">
+                <div className="chat-heading">
+                    <div className="chat-heading__name">{customerName}</div>
+                    <div className="chat-heading__email">{customerEmail}</div>
+                </div>
+                <Button
+                    variant="outlined"
+                    disabled={!hasNextPage || isFetchingNextPage}
+                    onClick={async () => {
+                        await fetchNextPage();
+                    }}
+                >Load more</Button>
+                {messages?.pages.flatMap(page => page).reverse().map((message) => <ChatMessage message={message}
+                                                                                               key={message.id}></ChatMessage>)}
+                <SendMessage sendMessageProps={{
+                    customerId: props.participants.customerId,
+                    userId: props.participants.userId
+                }}></SendMessage>
             </div>
-            <Button
-                variant="outlined"
-                disabled={!hasNextPage || isFetchingNextPage}
-                onClick={async () => {
-                    await fetchNextPage();
-                }}
-            >Load more</Button>
-            {messages?.pages.flatMap(page => page).reverse().map((message) => <ChatMessage message={message} key={message.id}></ChatMessage>)}
-            <SendMessage sendMessageProps={{
-                customerId: props.participants.customerId,
-                userId: props.participants.userId
-            }}></SendMessage>
-        </div>
+        </Page>
     );
 }
