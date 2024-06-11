@@ -82,25 +82,10 @@ export function Navbar() {
                     ) : (
                         <>
                             <ButtonGroup variant="text" color="inherit">
-                                {Object.keys(pathAndTitle).map((path) => (
-                                    <Button
-                                        key={path}
-                                        component={NavLink}
-                                        to={path}
-                                        sx={{
-                                            px: 3,
-                                            '&.active': {
-                                                backgroundColor: theme.palette.primary.dark,
-                                                color: theme.palette.primary.contrastText,
-                                            },
-                                        }}
-                                    >
-                                        {pathAndTitle[path].label}
-                                    </Button>
-                                ))}
-                                <Button onClick={handleLogout} color="inherit" component={Link} to="/login">
-                                    Log Out
-                                </Button>
+                                {menuItems}
+                                <ListItemButton component={Link} to={"/login"} onClick={handleLogout}>
+                                    <ListItemText primary="Log out" />
+                                </ListItemButton>
                             </ButtonGroup>
                             <Typography sx={{m: 2}}> Logged as {auth?.displayName} ({auth?.email})</Typography>
                         </>
