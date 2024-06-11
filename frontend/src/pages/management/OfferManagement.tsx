@@ -2,7 +2,7 @@ import React from 'react';
 import Page from '../../components/base/Page';
 import { Typography } from '@mui/material';
 import { useOffers, useOffer, useCreateOffer, useUpdateOffer, useDeleteOffer } from '../../hooks/useOffers.ts';
-import { OfferDto, OfferExtendedDto, OfferCreateDto, OfferUpdateDto } from '../../models/offer';
+import {OfferDto, OfferExtendedDto, OfferCreateDto, OfferUpdateDto, OfferFilters} from '../../models/offer';
 import CreateOfferDialog from '../../components/dialogs/offer/CreateOfferDialog.tsx';
 import EditOfferDialog from '../../components/dialogs/offer/EditOfferDialog.tsx';
 import DetailOfferDialog from '../../components/dialogs/offer/DetailOfferDialog.tsx';
@@ -35,13 +35,17 @@ const OfferManagement: React.FC = () => {
             <Typography component="h1" variant="h5">
                 Offer Management
             </Typography>
-            <CursorPaginatedDataGrid<OfferDto, OfferExtendedDto, OfferCreateDto, OfferUpdateDto>
+            <CursorPaginatedDataGrid<OfferDto, OfferExtendedDto, OfferCreateDto, OfferUpdateDto, OfferFilters>
                 useEntitiesHook={useOffers}
                 useEntityHook={useOffer}
                 useCreateEntityHook={useCreateOffer}
                 useUpdateEntityHook={useUpdateOffer}
                 useDeleteEntityHook={useDeleteOffer}
                 columns={columns}
+                createFilterObject={(model) => { return {
+                    id: model.items.find(item => item.field === 'id')?.value ?? undefined,
+                    name: model.items.find(item => item.field === 'name')?.value ?? undefined,
+                }}}
                 createDialog={<CreateOfferDialog />}
                 editDialog={<EditOfferDialog />}
                 detailDialog={<DetailOfferDialog />}

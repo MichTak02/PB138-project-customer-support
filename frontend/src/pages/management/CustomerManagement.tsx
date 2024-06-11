@@ -2,7 +2,13 @@ import React from 'react';
 import Page from '../../components/base/Page';
 import { Typography } from '@mui/material';
 import { useCustomers, useCustomer, useCreateCustomer, useUpdateCustomer, useDeleteCustomer } from '../../hooks/useCustomers.ts';
-import { CustomerDto, CustomerExtendedDto, CustomerCreateDto, CustomerUpdateDto } from '../../models/customer';
+import {
+    CustomerDto,
+    CustomerExtendedDto,
+    CustomerCreateDto,
+    CustomerUpdateDto,
+    CustomerFilters
+} from '../../models/customer';
 import CreateCustomerDialog from '../../components/dialogs/customer/CreateCustomerDialog.tsx';
 import EditCustomerDialog from '../../components/dialogs/customer/EditCustomerDialog.tsx';
 import DetailCustomerDialog from '../../components/dialogs/customer/DetailCustomerDialog.tsx';
@@ -21,13 +27,18 @@ const CustomerManagement: React.FC = () => {
             <Typography component="h1" variant="h5">
                 Customer Management
             </Typography>
-            <CursorPaginatedDataGrid<CustomerDto, CustomerExtendedDto, CustomerCreateDto, CustomerUpdateDto>
+            <CursorPaginatedDataGrid<CustomerDto, CustomerExtendedDto, CustomerCreateDto, CustomerUpdateDto, CustomerFilters>
                 useEntitiesHook={useCustomers}
                 useEntityHook={useCustomer}
                 useCreateEntityHook={useCreateCustomer}
                 useUpdateEntityHook={useUpdateCustomer}
                 useDeleteEntityHook={useDeleteCustomer}
                 columns={columns}
+                createFilterObject={(model) => { return {
+                    id: model.items.find(item => item.field === 'id')?.value ?? undefined,
+                    name: model.items.find(item => item.field === 'name')?.value ?? undefined,
+                    surname: model.items.find(item => item.field === 'surname')?.value ?? undefined,
+                }}}
                 createDialog={<CreateCustomerDialog />}
                 editDialog={<EditCustomerDialog />}
                 detailDialog={<DetailCustomerDialog />}

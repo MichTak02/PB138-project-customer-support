@@ -2,7 +2,7 @@ import React from 'react';
 import Page from '../../components/base/Page';
 import { Typography } from '@mui/material';
 import { useUsers, useUser, useCreateUser, useUpdateUser, useDeleteUser } from '../../hooks/useUsers.ts';
-import { UserDto, UserExtendedDto, UserCreateDto, UserUpdateDto } from '../../models/user';
+import {UserDto, UserExtendedDto, UserCreateDto, UserUpdateDto, UserFilters} from '../../models/user';
 import CreateUserDialog from '../../components/dialogs/user/CreateUserDialog.tsx';
 import EditUserDialog from '../../components/dialogs/user/EditUserDialog.tsx';
 import DetailUserDialog from '../../components/dialogs/user/DetailUserDialog.tsx';
@@ -22,13 +22,19 @@ const UserManagement: React.FC = () => {
             <Typography component="h1" variant="h5">
                 User Management
             </Typography>
-            <CursorPaginatedDataGrid<UserDto, UserExtendedDto, UserCreateDto, UserUpdateDto>
+            <CursorPaginatedDataGrid<UserDto, UserExtendedDto, UserCreateDto, UserUpdateDto, UserFilters>
                 useEntitiesHook={useUsers}
                 useEntityHook={useUser}
                 useCreateEntityHook={useCreateUser}
                 useUpdateEntityHook={useUpdateUser}
                 useDeleteEntityHook={useDeleteUser}
                 columns={columns}
+                createFilterObject={(model) => { return {
+                    id: model.items.find(item => item.field === 'id')?.value ?? undefined,
+                    email: model.items.find(item => item.field === 'email')?.value ?? undefined,
+                    displayName: model.items.find(item => item.field === 'displayName')?.value ?? undefined,
+                    role: model.items.find(item => item.field === 'role')?.value ?? undefined,
+                }}}
                 createDialog={<CreateUserDialog />}
                 editDialog={<EditUserDialog />}
                 detailDialog={<DetailUserDialog />}

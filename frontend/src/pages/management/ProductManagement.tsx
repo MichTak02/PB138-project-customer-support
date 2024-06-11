@@ -7,7 +7,7 @@ import {
 import Page from "../../components/base/Page.tsx";
 import { Typography } from "@mui/material";
 import CursorPaginatedDataGrid from "../../components/dataDisplay/CursorPaginatedDataGrid.tsx";
-import { ProductCreateDto, ProductDto, ProductUpdateDto } from "../../models/product.ts";
+import {ProductCreateDto, ProductDto, ProductFilters, ProductUpdateDto} from "../../models/product.ts";
 import CreateProductDialog from "../../components/dialogs/product/CreateProductDialog.tsx";
 import EditProductDialog from "../../components/dialogs/product/EditProductDialog.tsx";
 import DetailProductDialog from "../../components/dialogs/product/DetailProductDialog.tsx";
@@ -36,8 +36,13 @@ const ProductManagement: React.FC = () => {
             <Typography component="h1" variant="h5">
                 Product Management
             </Typography>
-            <CursorPaginatedDataGrid<ProductDto, ProductDto, ProductCreateDto, ProductUpdateDto>
+            <CursorPaginatedDataGrid<ProductDto, ProductDto, ProductCreateDto, ProductUpdateDto, ProductFilters>
                 columns={columns}
+                createFilterObject={(model) => { return {
+                    id: model.items.find(item => item.field === 'id')?.value ?? undefined,
+                    name: model.items.find(item => item.field === 'name')?.value ?? undefined,
+                    type: model.items.find(item => item.field === 'type')?.value ?? undefined,
+                }}}
                 createDialog={<CreateProductDialog />}
                 editDialog={<EditProductDialog />}
                 detailDialog={<DetailProductDialog />}

@@ -8,7 +8,7 @@ import {
 } from '../../hooks/useCategories.ts';
 import Page from "../../components/base/Page.tsx";
 import CursorPaginatedDataGrid from "../../components/dataDisplay/CursorPaginatedDataGrid.tsx";
-import { CategoryCreateDto, CategoryDto, CategoryUpdateDto } from "../../models/category.ts";
+import {CategoryCreateDto, CategoryDto, CategoryFilters, CategoryUpdateDto} from "../../models/category.ts";
 import CreateCategoryDialog from "../../components/dialogs/category/CreateCategoryDialog.tsx";
 import EditCategoryDialog from "../../components/dialogs/category/EditCategoryDialog.tsx";
 import DetailCategoryDialog from "../../components/dialogs/category/DetailCategoryDialog.tsx";
@@ -22,8 +22,12 @@ const CategoryManagement: React.FC = () => {
 
     return (
         <Page title="Category Management">
-            <CursorPaginatedDataGrid<CategoryDto, CategoryDto, CategoryCreateDto, CategoryUpdateDto>
+            <CursorPaginatedDataGrid<CategoryDto, CategoryDto, CategoryCreateDto, CategoryUpdateDto, CategoryFilters>
                 columns={columns}
+                createFilterObject={(model) => { return {
+                    id: model.items.find(item => item.field === 'id')?.value ?? undefined,
+                    name: model.items.find(item => item.field === 'name')?.value ?? undefined,
+                }}}
                 createDialog={<CreateCategoryDialog />}
                 editDialog={<EditCategoryDialog />}
                 detailDialog={<DetailCategoryDialog />}
