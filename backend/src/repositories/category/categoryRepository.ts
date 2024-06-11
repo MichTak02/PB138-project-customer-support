@@ -1,15 +1,16 @@
-import { Result } from "@badrap/result";
+import {Result} from "@badrap/result";
 import prisma from "../client";
-import { CategoryCreateDto, CategoryDto, CategoryFilters, CategoryUpdateDto } from "./types";
-import { categoryModelToCategoryDto } from "./mappers";
-import { DbResult } from "../types";
+import {CategoryCreateDto, CategoryDto, CategoryFilters, CategoryUpdateDto} from "./types";
+import {categoryModelToCategoryDto} from "./mappers";
+import {DbResult} from "../types";
 import {handleRepositoryErrors, READ_MANY_TAKE} from "../../utils/repositoryUtils";
 import {ConflictError} from "../../errors/errors";
+import {Prisma} from "@prisma/client";
 
 const categoryRepository = {
     async create(data: CategoryCreateDto): DbResult<CategoryDto> {
         try {
-            const category = await prisma.category.create({ data });
+            const category = await prisma.category.create({data});
             return Result.ok(categoryModelToCategoryDto(category))
         } catch (error) {
             return handleRepositoryErrors(error);
@@ -29,21 +30,28 @@ const categoryRepository = {
         }
     },
 
-    async readMany(cursorId: number | undefined, filter: CategoryFilters): DbResult<CategoryDto[]> {
+    async readMany(cursorId: number | undefined, filterValues: CategoryFilters): DbResult<CategoryDto[]> {
+        const filter: Prisma.CategoryWhereInput = {
+            AND: [
+                {name: {contains: filterValues.name, mode: 'insensitive'}},
+                {id: {equals: filterValues.id}},
+            ],
+        }
+
         try {
             if (!cursorId) {
                 const categories = await prisma.category.findMany({
                     take: READ_MANY_TAKE,
-                    orderBy: { id: 'asc'},
-                    where: filter,
+                    orderBy: {id: 'asc'},
+                    where: filter
                 });
                 return Result.ok(categories.map(category => categoryModelToCategoryDto(category)));
             }
             const categories = await prisma.category.findMany({
                 skip: 1,
-                cursor: { id: cursorId },
+                cursor: {id: cursorId},
                 take: READ_MANY_TAKE,
-                orderBy: { id: 'asc'},
+                orderBy: {id: 'asc'},
                 where: filter,
             });
 
@@ -85,10 +93,10 @@ const categoryRepository = {
                         throw new ConflictError("Cannot delete category as it is used by some products");
                     }
                     const deletedCategory = await transaction.category.delete({
-                        where: { id },
+                        where: {id},
                     });
                     return deletedCategory;
-                }   
+                }
             )
             return Result.ok(transactionResult);
         } catch (error) {

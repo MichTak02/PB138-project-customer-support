@@ -1,9 +1,10 @@
-import { Result } from "@badrap/result";
+import {Result} from "@badrap/result";
 import prisma from "../client";
-import { DbResult } from "../types";
+import {DbResult} from "../types";
 import {handleRepositoryErrors, READ_MANY_TAKE} from "../../utils/repositoryUtils";
-import { ProductCreateDto, ProductDto, ProductExtendedDto, ProductFilters, ProductUpdateDto } from "./types";
-import { productModelToProductDto, productModelToProductExtendedDto } from "./mappers";
+import {ProductCreateDto, ProductDto, ProductExtendedDto, ProductFilters, ProductUpdateDto} from "./types";
+import {productModelToProductDto, productModelToProductExtendedDto} from "./mappers";
+import {Prisma} from "@prisma/client";
 
 const productRepository = {
     async create(data: ProductCreateDto): DbResult<ProductDto> {
@@ -15,13 +16,13 @@ const productRepository = {
                     price: data.price,
                     type: data.type,
                     categories: {
-                        connect : data.categoryIds.map(id => ({ id }))
+                        connect: data.categoryIds.map(id => ({id}))
                     }
                 },
                 include: {
                     categories: true,
                 }
-             });
+            });
             return Result.ok(productModelToProductDto(product))
         } catch (error) {
             return handleRepositoryErrors(error);
@@ -44,12 +45,23 @@ const productRepository = {
         }
     },
 
-    async readMany(cursorId: number | undefined, filter: ProductFilters): DbResult<ProductExtendedDto[]> {
+    async readMany(cursorId: number | undefined, filterValues: ProductFilters): DbResult<ProductExtendedDto[]> {
+        const filter: Prisma.ProductWhereInput = {
+            AND: [
+                {name: {contains: filterValues.name, mode: 'insensitive'}},
+                {description: {contains: filterValues.description, mode: 'insensitive'}},
+                {type: {equals: filterValues.type}},
+                {price: {gte: filterValues.minPrice}},
+                {price: {lte: filterValues.maxPrice}},
+                {categories: {some: {id: {in: filterValues.categoryIds}}}},
+            ],
+        }
+
         try {
             if (!cursorId) {
                 const products = await prisma.product.findMany({
                     take: READ_MANY_TAKE,
-                    orderBy: { id: 'asc'},
+                    orderBy: {id: 'asc'},
                     where: filter,
                     include: {
                         categories: true,
@@ -59,9 +71,9 @@ const productRepository = {
             }
             const products = await prisma.product.findMany({
                 skip: 1,
-                cursor: { id: cursorId },
+                cursor: {id: cursorId},
                 take: READ_MANY_TAKE,
-                orderBy: { id: 'asc'},
+                orderBy: {id: 'asc'},
                 where: filter,
                 include: {
                     categories: true,
@@ -114,13 +126,13 @@ const productRepository = {
                         throw new Error("Cannot delete product as it is used by some offers");
                     }
                     const deletedProduct = await transaction.product.delete({
-                        where: { id },
+                        where: {id},
                         include: {
                             categories: true
                         }
                     });
                     return deletedProduct;
-                }   
+                }
             )
             return Result.ok(productModelToProductDto(transactionResult));
         } catch (error) {

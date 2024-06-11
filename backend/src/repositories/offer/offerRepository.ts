@@ -1,16 +1,17 @@
-import { Result } from "@badrap/result";
+import {Result} from "@badrap/result";
 import prisma from "../client";
-import { DbResult } from "../types";
-import { OfferCreateDto, OfferDto, OfferExtendedDto, OfferFilter, OfferUpdateDto } from "./types";
-import { offerModelToOfferDto, offerModelToOfferExtendedDto } from "./mappers";
+import {DbResult} from "../types";
+import {OfferCreateDto, OfferDto, OfferExtendedDto, OfferFilter, OfferUpdateDto} from "./types";
+import {offerModelToOfferDto, offerModelToOfferExtendedDto} from "./mappers";
 import {handleRepositoryErrors, READ_MANY_TAKE} from "../../utils/repositoryUtils";
+import {Prisma} from "@prisma/client";
 
 const offerRepository = {
     async create(data: OfferCreateDto): DbResult<OfferDto> {
         try {
             const transactionResult = await prisma.$transaction(
                 async (transaction) => {
-                    const { offerToProducts, ...offerData} = data;
+                    const {offerToProducts, ...offerData} = data;
                     const offer = await transaction.offer.create({
                         data: offerData,
                         include: {
@@ -35,7 +36,7 @@ const offerRepository = {
     async read(id: number): DbResult<OfferExtendedDto> {
         try {
             const offer = await prisma.offer.findUniqueOrThrow({
-                where: { id },
+                where: {id},
                 include: {
                     offerToProducts: {
                         include: {
@@ -54,10 +55,10 @@ const offerRepository = {
         }
     },
 
-    async readMany(cursorId: number | undefined, filter: OfferFilter) : DbResult<OfferExtendedDto[]> {
-        const filterObj = {
-            name: filter.name,
-            description: filter.description,
+    async readMany(cursorId: number | undefined, filter: OfferFilter): DbResult<OfferExtendedDto[]> {
+        const filterObj: Prisma.OfferWhereInput = {
+            name: {contains: filter.name, mode: 'insensitive'},
+            description: {contains: filter.description, mode: 'insensitive'},
             offerToProducts: filter.productIds === undefined ? undefined : {
                 some: {
                     productId: {
@@ -88,7 +89,7 @@ const offerRepository = {
             if (!cursorId) {
                 const offers = await prisma.offer.findMany({
                     take: READ_MANY_TAKE,
-                    orderBy: { id: 'asc'},
+                    orderBy: {id: 'asc'},
                     where: filterObj,
                     include: includeObj
                 });
@@ -96,9 +97,9 @@ const offerRepository = {
             }
             const offers = await prisma.offer.findMany({
                 skip: 1,
-                cursor: { id: cursorId },
+                cursor: {id: cursorId},
                 take: READ_MANY_TAKE,
-                orderBy: { id: 'asc'},
+                orderBy: {id: 'asc'},
                 where: filterObj,
                 include: includeObj
             });
@@ -131,7 +132,7 @@ const offerRepository = {
             })
 
             const deleteOffer = prisma.offer.delete({
-                where: { id },
+                where: {id},
                 include: {
                     offerToProducts: true,
                 },

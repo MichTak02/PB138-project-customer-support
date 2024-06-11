@@ -4,6 +4,7 @@ import {UserCreateDto, UserDto, UserExtendedDto, UserFilters, UserUpdateDto} fro
 import prisma from "../client";
 import {handleRepositoryErrors, READ_MANY_TAKE} from "../../utils/repositoryUtils";
 import {userModelToUserDto, userModelToUserExtendedDto} from "./mappers";
+import {Prisma} from "@prisma/client";
 
 export const userRepository = {
     async create (data: UserCreateDto): DbResult<UserDto> {
@@ -95,7 +96,17 @@ export const userRepository = {
         }
     },
 
-    async readMany(cursorId: number | undefined, filter?: UserFilters): DbResult<UserDto[]> {
+    async readMany(cursorId: number | undefined, filterValues?: UserFilters): DbResult<UserDto[]> {
+        const filter: Prisma.UserWhereInput = {
+            AND: [
+                {email: {contains: filterValues?.email, mode: 'insensitive'}},
+                {displayName: {contains: filterValues?.displayName, mode: 'insensitive'}},
+                {role: {equals: filterValues?.role}},
+                {createdOn: {gte: filterValues?.minCreatedOn}},
+                {createdOn: {lte: filterValues?.maxCreatedOn}},
+            ],
+        }
+
         try {
             if (!cursorId) {
                 const users = await prisma.user.findMany({
