@@ -62,7 +62,7 @@ export const chatCommunicationData = Array.from({length: ENTRY_COUNT}).map(() =>
 
 export const voiceCommunicationData = Array.from({length: ENTRY_COUNT}).map(() => ({
     id: faker.number.int({min: 0, max: 1000000}),
-    filePath: faker.internet.url(),
+    filePath: "genericCall.mp3",
     start: faker.date.past(),
     end: faker.date.past(),
     isUserStarted: !!faker.number.int({min: 0, max: 1}),
