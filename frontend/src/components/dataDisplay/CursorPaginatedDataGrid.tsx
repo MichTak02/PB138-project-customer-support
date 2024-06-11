@@ -1,6 +1,6 @@
-import React, { createContext, useState } from 'react';
+import React, {createContext, useState} from 'react';
 import {
-    DataGrid, GridColDef,
+    DataGrid, GridColDef, GridFilterModel,
     GridPaginationMeta,
     GridPaginationModel, GridRenderCellParams,
     GridValidRowModel
@@ -14,13 +14,14 @@ import {RoleValues} from "../../models/user.ts";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Authorized from "../auth/Authorized.tsx";
 
-type CursorPaginatedDataGridProps<TDto, TExtendedDto, TCreateDto, TUpdateDto> = {
-    useEntitiesHook: () => UseInfiniteQueryResult<InfiniteData<TDto[]>, Error>
+type CursorPaginatedDataGridProps<TDto, TExtendedDto, TCreateDto, TUpdateDto, TFilters> = {
+    useEntitiesHook: (_filter: any) => UseInfiniteQueryResult<InfiniteData<TDto[]>, Error>
     useEntityHook: (id: number) => UseQueryResult<TExtendedDto, Error>
     useCreateEntityHook: () => UseMutationResult<TDto, Error, TCreateDto, unknown>
     useUpdateEntityHook: () => UseMutationResult<TDto, Error, { id: number, updateData: TUpdateDto }, unknown>
     useDeleteEntityHook: () => UseMutationResult<TDto, Error, number, unknown>
     columns: GridColDef[]
+    createFilterObject: (model: GridFilterModel) => TFilters,
     createDialog: React.ReactElement
     editDialog: React.ReactElement
     detailDialog: React.ReactElement
@@ -96,13 +97,15 @@ export const DeleteDialogContext = createContext<DeleteDialogProps<any>>({
  *
  * - pak nasleduji dialogy na vytvareni, mazani a upravu
  */
-const CursorPaginatedDataGrid = <TDto extends BaseModelId & GridValidRowModel, TExtendedDto, TCreateDto, TUpdateDto>(props: CursorPaginatedDataGridProps<TDto, TExtendedDto, TCreateDto, TUpdateDto>) => {
-    const { useEntitiesHook, useEntityHook, useCreateEntityHook, useUpdateEntityHook, useDeleteEntityHook, columns, createDialog, editDialog, detailDialog, deleteDialog } = props
+const CursorPaginatedDataGrid = <TDto extends BaseModelId & GridValidRowModel, TExtendedDto, TCreateDto, TUpdateDto, TFilters>(props: CursorPaginatedDataGridProps<TDto, TExtendedDto, TCreateDto, TUpdateDto, TFilters>) => {
+    const { useEntitiesHook, useEntityHook, useCreateEntityHook, useUpdateEntityHook, useDeleteEntityHook, columns, createFilterObject, createDialog, editDialog, detailDialog, deleteDialog } = props
 
     const createMutation = useCreateEntityHook();
     const updateMutation = useUpdateEntityHook();
     const deleteMutation = useDeleteEntityHook();
-    const { data, fetchNextPage, hasNextPage, isFetching} = useEntitiesHook();
+    const ifilter: any = {}
+    const [filter, setFilter] = useState(ifilter);
+    const { data, fetchNextPage, hasNextPage, isFetching} = useEntitiesHook(filter);
     const {auth} = useAuth();
 
     const handleCreate = async (createData: TCreateDto) => {
@@ -245,6 +248,11 @@ const CursorPaginatedDataGrid = <TDto extends BaseModelId & GridValidRowModel, T
         }
     }, [paginationMeta?.hasNextPage, totalRowCount]);
 
+    const handleFilterModelChange = (model: GridFilterModel) => {
+        setFilter(createFilterObject(model));
+    };
+
+
     return (
         <>
             <Authorized role={RoleValues.ADMIN}>
@@ -265,6 +273,7 @@ const CursorPaginatedDataGrid = <TDto extends BaseModelId & GridValidRowModel, T
                 pageSizeOptions={[GET_MANY_SIZE]}
                 loading={isFetching}
                 disableRowSelectionOnClick
+                onFilterModelChange={handleFilterModelChange}
             />
 
             <CreateDialogContext.Provider value={createDialogProps}>
