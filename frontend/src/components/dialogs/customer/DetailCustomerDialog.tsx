@@ -65,7 +65,7 @@ const DetailCustomerDialog: React.FC = () => {
             </DialogContent>
             <DialogActions>
                 <Button color="primary" onClick={close}>Close</Button>
-                <Button color="secondary" onClick={handleViewVoiceRecords}>View Chat Records</Button>
+                <Button color="secondary" onClick={handleViewChatRecords}>View Chat Records</Button>
                 <Button color="secondary" onClick={handleViewVoiceRecords}>View Voice Records</Button>
             </DialogActions>
         </Dialog>
