@@ -18,11 +18,6 @@ export function Dashboard() {
     { text: "Offer Management", link: "/auth/offers", icon: <PercentIcon /> },
   ];
 
-  const communications = [
-    { text: "Voice Communications", link: "/customers/:customerId/voice", icon: <KeyboardVoiceIcon /> },
-    { text: "Chat Communications", link: "/customers/:customerId/chat", icon: <ChatBubbleIcon /> },
-  ];
-
   return (
     <Page title="Dashboard">
       <Typography component="h2" variant="h5" gutterBottom>
@@ -35,22 +30,6 @@ export function Dashboard() {
             {item.icon}
           </ListItemIcon>
           <ListItemText primary={item.text} />
-        </ListItem>
-      ))}
-    </List>
-      
-      <Divider sx={{ my: 2 }} />
-
-      <Typography component="h2" variant="h5" gutterBottom>
-        Communications
-      </Typography>
-      <List>
-      {communications.map((communication, index) => (
-        <ListItem button component={Link} to={communication.link} key={index}>
-          <ListItemIcon>
-            {communication.icon}
-          </ListItemIcon>
-          <ListItemText primary={communication.text} />
         </ListItem>
       ))}
     </List>
