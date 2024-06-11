@@ -16,6 +16,7 @@ export const getCategorySchema = z.object({
 export const getCategoriesSchema = z.object({
   query: z.object({
     cursor: z.coerce.number().optional(),
+    id: z.coerce.number().optional(),
     name: z.string().optional(),
   }),
 });

@@ -124,6 +124,7 @@ export const customerRepository = {
     async readMany(cursorId: number | undefined, filterValues?: CustomerFilters): DbResult<CustomerDto[]> {
         const filter: Prisma.CustomerWhereInput = {
             AND: [
+                {id: {equals: filterValues?.id}},
                 {name: {contains: filterValues?.name, mode: 'insensitive'}},
                 {surname: {contains: filterValues?.surname, mode: 'insensitive'}},
                 {email: {contains: filterValues?.email, mode: 'insensitive'}},

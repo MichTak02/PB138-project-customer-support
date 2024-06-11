@@ -16,4 +16,4 @@ export type CustomerExtendedDto = CustomerDto & {
     chatCommunications:  ChatCommunicationDto[]
     voiceCommunications: VoiceCommunicationDto[]
 }
-export type CustomerFilters = Partial<CustomerCreateDto>
+export type CustomerFilters = Partial<CustomerCreateDto & { id: number}>

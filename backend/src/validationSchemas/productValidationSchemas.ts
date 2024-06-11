@@ -19,7 +19,8 @@ export const getProductSchema = z.object({
 
 export const getProductsSchema = z.object({
     query: z.object({
-        cursor: z.coerce.number().optional().optional(),
+        cursor: z.coerce.number().optional(),
+        id: z.coerce.number().optional(),
         name: z.string().min(1).max(255).optional(),
         description: z.string().min(1).max(1020).optional(),
         minPrice: z.coerce.number().positive().optional(),
