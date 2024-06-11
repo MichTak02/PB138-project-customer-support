@@ -153,7 +153,7 @@ const offerRepository = {
                     }
                     return await prisma.offer.update({
                         where: {
-                            id: offerData.id,
+                            id: id,
                         },
                         data: offerData,
                         include: {
