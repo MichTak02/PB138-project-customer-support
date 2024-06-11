@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, FormGroup, Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, CircularProgress } from '@mui/material';
 import { CustomerUpdateDto, CustomerExtendedDto } from "../../../models/customer.ts";
 import { useForm, Controller } from 'react-hook-form';
@@ -24,6 +24,7 @@ const EditCustomerDialog: React.FC = () => {
     } = useProducts();
 
     const loadMoreRef = useRef<HTMLDivElement | null>(null);
+    const [selectOpen, setSelectOpen] = useState(false);
 
     const handleProductScroll = (event: React.UIEvent<HTMLDivElement>) => {
         if (hasNextPage && !isFetchingNextPage && event.currentTarget.scrollTop + event.currentTarget.clientHeight >= event.currentTarget.scrollHeight) {
@@ -115,29 +116,50 @@ const EditCustomerDialog: React.FC = () => {
                             control={control}
                             name="productIds"
                             render={({ field }) => (
-                                <Select
-                                    labelId="product-label"
-                                    multiple
-                                    {...field}
-                                    value={field.value ?? []}
-                                    renderValue={(selected) => {
-                                        const selectedProducts = sortedProducts.filter(product => selected.includes(product.id));
-                                        return selectedProducts.map(product => product.name).join(', ') || '';
-                                    }}
-                                    MenuProps={{ onScroll: handleProductScroll }}
-                                >
-                                    {sortedProducts.map((product) => (
-                                        <MenuItem key={product.id} value={product.id}>
-                                            <Checkbox checked={field.value ? field.value.includes(product.id) : false} />
-                                            <ListItemText primary={product.name} />
-                                        </MenuItem>
-                                    ))}
-                                    {isFetchingNextPage && (
-                                        <MenuItem disabled>
-                                            <CircularProgress size={24} />
-                                        </MenuItem>
-                                    )}
-                                </Select>
+                                <>
+                                    <Select
+                                        labelId="product-label"
+                                        multiple
+                                        {...field}
+                                        open={selectOpen}
+                                        onOpen={() => setSelectOpen(true)}
+                                        onClose={() => setSelectOpen(false)}
+                                        value={field.value ?? []}
+                                        renderValue={(selected) => {
+                                            const selectedProducts = sortedProducts.filter(product => selected.includes(product.id));
+                                            return selectedProducts.map(product => product.name).join(', ') || '';
+                                        }}
+                                        MenuProps={{ onScroll: handleProductScroll }}
+                                    >
+                                        {sortedProducts.map((product) => (
+                                            <MenuItem key={product.id} value={product.id}>
+                                                <Checkbox checked={field.value ? field.value.includes(product.id) : false} />
+                                                <ListItemText primary={product.name} />
+                                            </MenuItem>
+                                        ))}
+                                        {isFetchingNextPage && (
+                                            <MenuItem disabled>
+                                                <CircularProgress size={24} />
+                                            </MenuItem>
+                                        )}
+                                        <Button
+                                            onClick={() => setSelectOpen(false)}
+                                            fullWidth
+                                            color="primary"
+                                            sx={{
+                                                position: 'sticky',
+                                                bottom: 0,
+                                                bgcolor: 'white',
+                                                '&:hover': {
+                                                    bgcolor: 'white',
+                                                    boxShadow: 'none',
+                                                },
+                                            }}
+                                        >
+                                            OK
+                                        </Button>
+                                    </Select>
+                                </>
                             )}
                         />
                         {errors.productIds && <p>{errors.productIds.message}</p>}

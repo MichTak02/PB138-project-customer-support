@@ -4,18 +4,18 @@ import v from "validator";
 
 // Category Schemas
 export const createCategorySchema = z.object({
-    name: z.string().min(1, "Full name is required.").max(100, "Name is too long."),
+    name: z.string().min(1, "Full name is required.").max(255, "Name is too long."),
 });
 
 export const editCategorySchema = z.object({
-    name: z.string().min(1, "Full name is required.").max(100, "Name is too long."),
+    name: z.string().min(1, "Full name is required.").max(255, "Name is too long."),
 });
 
 // Product Schemas
 
 export const createProductSchema = z.object({
-    name: z.string().min(1, "Product name is required.").max(100, "Name is too long."),
-    description: z.string().min(1, "Description is required.").max(1000, "Description is too long."),
+    name: z.string().min(1, "Product name is required.").max(255, "Name is too long."),
+    description: z.string().min(1, "Description is required.").max(1020, "Description is too long."),
     price: z.number().positive("Price must be a positive number."),
     type: z.string().min(1, "Type is required.").max(50, "Type is too long."),
     categoryIds: z.array(z.number()).nonempty("At least one category is required."),
@@ -53,30 +53,30 @@ export const editOfferSchema = z.object({
 // User Schemas
 export const createUserSchema = z.object({
     email: z.string().email("Invalid email"),
-    displayName: z.string().min(1, "Display name is required.").max(100, "Display name is too long."),
+    displayName: z.string().min(1, "Display name is required.").max(255, "Display name is too long."),
     password: z.string().refine(v.isStrongPassword, "Password is weak"),
     role: z.string().min(1, "Role is required."),
 });
 
 export const editUserSchema = z.object({
-    displayName: z.string().min(1, "Display name is required.").max(100, "Display name is too long."),
+    displayName: z.string().min(1, "Display name is required.").max(255, "Display name is too long."),
     role: z.string().min(1, "Role is required."),
 });
 
 // Customer Schemas
 export const createCustomerSchema = z.object({
-    name: z.string().min(1, "Name is required.").max(100, "Name is too long."),
-    surname: z.string().min(1, "Surname is required.").max(100, "Surname is too long."),
+    name: z.string().min(1, "Name is required.").max(255, "Name is too long."),
+    surname: z.string().min(1, "Surname is required.").max(255, "Surname is too long."),
     email: z.string().email("Invalid email"),
-    phoneNumber: z.string().min(1, "Phone number is required.").max(20, "Phone number is too long."),
+    phoneNumber: z.string().min(1).refine(v.isMobilePhone),
     productIds: z.array(z.number()).nonempty("At least one product is required."),
 });
 
 export const editCustomerSchema = z.object({
-    name: z.string().min(1, "Name is required.").max(100, "Name is too long."),
-    surname: z.string().min(1, "Surname is required.").max(100, "Surname is too long."),
+    name: z.string().min(1, "Name is required.").max(255, "Name is too long."),
+    surname: z.string().min(1, "Surname is required.").max(255, "Surname is too long."),
     email: z.string().email("Invalid email"),
-    phoneNumber: z.string().min(1, "Phone number is required.").max(20, "Phone number is too long."),
+    phoneNumber: z.string().min(1).refine(v.isMobilePhone),
 });
 
 // Login and Register Schemas
