@@ -9,7 +9,7 @@ export type OfferToProductDto = BaseModelId & {
 }
 
 export type OfferToProductCreateDto = Omit<OfferToProductDto, "id">
-export type OfferToProductUpdateDto = Partial<OfferToProductCreateDto>
+export type OfferToProductUpdateDto = OfferToProductDto
 
 export type OfferToProductExtendedDto = Omit<OfferToProductDto, "productId"> & {
     product: ProductExtendedDto,
