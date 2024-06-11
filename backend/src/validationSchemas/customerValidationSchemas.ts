@@ -23,8 +23,8 @@ export const getCustomersRequestSchema = z.object({
         cursor: z.coerce.number().optional(),
         name: z.string().min(1).max(255).optional(),
         surname: z.string().min(1).max(255).optional(),
-        email: z.string().email().optional(),
-        phoneNumber: z.string().min(1).refine(v.isMobilePhone).optional(),
+        email: z.string().optional(),
+        phoneNumber: z.string().min(1).optional(),
         productIds: z.array(z.coerce.number()).optional(),
     }),
 });

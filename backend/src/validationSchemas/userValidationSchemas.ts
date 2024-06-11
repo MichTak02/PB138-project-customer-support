@@ -21,7 +21,7 @@ export const getUserRequestSchema = z.object({
 export const getUsersRequestSchema = z.object({
     query: z.object({
         cursor: z.coerce.number().optional(),
-        email: z.string().email().optional(),
+        email: z.string().optional(),
         displayName: z.string().min(1).max(255).optional(),
         minCreatedOn: z.coerce.date().optional(),
         maxCreatedOn: z.coerce.date().optional(),
