@@ -57,6 +57,7 @@ const offerRepository = {
 
     async readMany(cursorId: number | undefined, filter: OfferFilter): DbResult<OfferExtendedDto[]> {
         const filterObj: Prisma.OfferWhereInput = {
+            id: {equals: filter.id},
             name: {contains: filter.name, mode: 'insensitive'},
             description: {contains: filter.description, mode: 'insensitive'},
             offerToProducts: filter.productIds === undefined ? undefined : {

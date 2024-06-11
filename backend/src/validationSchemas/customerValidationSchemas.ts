@@ -21,6 +21,7 @@ export const getCustomerRequestSchema = z.object({
 export const getCustomersRequestSchema = z.object({
     query: z.object({
         cursor: z.coerce.number().optional(),
+        id: z.coerce.number().optional(),
         name: z.string().min(1).max(255).optional(),
         surname: z.string().min(1).max(255).optional(),
         email: z.string().optional(),

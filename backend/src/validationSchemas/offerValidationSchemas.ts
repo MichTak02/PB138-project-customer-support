@@ -21,9 +21,10 @@ export const getOfferSchema = z.object({
 
 export const getOffersSchema = z.object({
   query: z.object({
-    cursor: z.coerce.number().optional().optional(),
-    name: z.string().min(1).max(255).optional(),
-    description: z.string().min(1).max(1020).optional(),
+    cursor: z.coerce.number().optional(),
+    id: z.coerce.number().optional(),
+    name: z.string().optional(),
+    description: z.string().optional(),
     productIds: z.array(z.coerce.number()).optional()
   }),
 });

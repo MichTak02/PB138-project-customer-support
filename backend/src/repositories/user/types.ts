@@ -24,4 +24,4 @@ export type UserExtendedDto = UserDto & {
     voiceCommunications:   VoiceCommunicationDto[]
 }
 
-export type UserFilters = Partial<Omit<UserCreateDto, "passwordHash" | "createdOn"> & {minCreatedOn: Date, maxCreatedOn: Date}>
+export type UserFilters = Partial<Omit<UserCreateDto, "passwordHash" | "createdOn"> & {id: number, minCreatedOn: Date, maxCreatedOn: Date}>

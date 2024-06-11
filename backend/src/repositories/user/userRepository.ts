@@ -99,6 +99,7 @@ export const userRepository = {
     async readMany(cursorId: number | undefined, filterValues?: UserFilters): DbResult<UserDto[]> {
         const filter: Prisma.UserWhereInput = {
             AND: [
+                {id: {equals: filterValues?.id}},
                 {email: {contains: filterValues?.email, mode: 'insensitive'}},
                 {displayName: {contains: filterValues?.displayName, mode: 'insensitive'}},
                 {role: {equals: filterValues?.role}},

@@ -19,7 +19,7 @@ class ApiService<TDto, TExtendedDto, TCreateDto, TUpdateDto, TFilters> {
 
         for (let index = 0; index < entries.length; index++) {
             const [key, value] = entries[index];
-            if (value === undefined) {
+            if (value === undefined || value === "") {
                 continue;
             }
 
@@ -32,7 +32,6 @@ class ApiService<TDto, TExtendedDto, TCreateDto, TUpdateDto, TFilters> {
                 result = result.concat(`&${key}=${value}`);
             }
         }
-
         return result;
     }
 

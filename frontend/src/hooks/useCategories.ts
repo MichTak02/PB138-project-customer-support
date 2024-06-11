@@ -6,7 +6,7 @@ const categoriesApi = new ApiService<CategoryDto, CategoryDto, CategoryCreateDto
 
 export const useCategories = (filter?: CategoryFilters) => {
     return useInfiniteQuery({
-        queryKey: ['categories'],
+        queryKey: ['categories', filter],
         queryFn: ({pageParam}) => categoriesApi.getMany(pageParam, filter),
         initialPageParam: 0,
         getNextPageParam: (lastPage, _pages) => lastPage.length === GET_MANY_SIZE ? lastPage[lastPage.length - 1].id : undefined,

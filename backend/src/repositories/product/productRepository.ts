@@ -49,6 +49,7 @@ const productRepository = {
     async readMany(cursorId: number | undefined, filterValues: ProductFilters): DbResult<ProductExtendedDto[]> {
         const filter: Prisma.ProductWhereInput = {
             AND: [
+                {id: {equals: filterValues.id}},
                 {name: {contains: filterValues.name, mode: 'insensitive'}},
                 {description: {contains: filterValues.description, mode: 'insensitive'}},
                 {type: {equals: filterValues.type}},
