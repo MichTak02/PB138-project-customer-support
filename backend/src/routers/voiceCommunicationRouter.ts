@@ -50,5 +50,5 @@ voiceCommunicationRouter.get("/audioFile/:id", passport.session(), authz(RoleVal
         return;
     }
 
-    res.status(200).sendFile(voiceCommPath.value);
+    res.status(200).sendFile(path.join(__dirname, process.env.UPLOAD_DIR ?? "", voiceCommPath.value));
 });
