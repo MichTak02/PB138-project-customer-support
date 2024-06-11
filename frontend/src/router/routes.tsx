@@ -7,24 +7,24 @@ import Login from '../pages/Login';
 import Register from '../pages/Register';
 import UserManagement from '../pages/management/UserManagement';
 import CustomerManagement from '../pages/management/CustomerManagement';
-import VoiceCommunications from '../pages/communications/VoiceCommunications';
-import ChatCommunications from '../pages/communications/ChatCommunications';
+import VoiceRecordsHistoryWrapper from '../components/VoiceRecordsHistoryWrapper'; 
+import ChatRecordsHistoryWrapper from '../components/ChatRecordsHistoryWrapper'; 
 import ProductManagement from '../pages/management/ProductManagement';
 import CategoryManagement from '../pages/management/CategoryManagement';
 import OfferManagement from '../pages/management/OfferManagement';
 import NotFound from '../pages/errors/NotFound';
 import PrivateRoute from "../components/auth/PrivateRoute.tsx";
-import {RoleValues} from "../models/user.ts";
+import { RoleValues } from "../models/user.ts";
 import RootRoute from "../components/auth/RootRoute.tsx";
 
 const customerManagementRoutes: RouteObject[] = [
     {
-        path: 'voice',
-        Component: VoiceCommunications,
+        path: 'chat-records/:userId/:customerId',
+        Component: ChatRecordsHistoryWrapper,
     },
     {
-        path: 'chat',
-        Component: ChatCommunications,
+        path: 'voice-records/:userId/:customerId',
+        Component: VoiceRecordsHistoryWrapper,
     },
 ];
 

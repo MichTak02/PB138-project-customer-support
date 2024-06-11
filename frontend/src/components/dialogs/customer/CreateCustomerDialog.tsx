@@ -10,7 +10,7 @@ import { useProducts } from '../../../hooks/useProducts';
 const CreateCustomerDialog = () => {
     const { isOpen, close, createEntity }: CreateDialogProps<CustomerCreateDto> = useContext(CreateDialogContext);
 
-    const { handleSubmit, formState: { errors }, register, control, setValue, watch } = useForm<CustomerCreateDto>({
+    const { handleSubmit, formState: { errors }, register, control, reset } = useForm<CustomerCreateDto>({
         resolver: zodResolver(createCustomerSchema),
         defaultValues: {
             name: '',
@@ -47,6 +47,18 @@ const CreateCustomerDialog = () => {
             return () => observer.disconnect();
         }
     }, [loadMoreRef.current, hasNextPage, isFetchingNextPage]);
+
+    useEffect(() => {
+        if (!isOpen) {
+            reset({
+                name: '',
+                surname: '',
+                email: '',
+                phoneNumber: '',
+                productIds: []
+            });
+        }
+    }, [isOpen, reset]);
 
     const onCreateCustomer = async (data: CustomerCreateDto) => {
         if (data.productIds.length === 0) {
@@ -142,7 +154,18 @@ const CreateCustomerDialog = () => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleSubmit(onCreateCustomer)} color="primary">Create Customer</Button>
-                <Button onClick={close} color="error">Cancel</Button>
+                <Button onClick={() => {
+                    close();
+                    reset({
+                        name: '',
+                        surname: '',
+                        email: '',
+                        phoneNumber: '',
+                        productIds: []
+                    });
+                }} color="error">
+                    Cancel
+                </Button>
             </DialogActions>
         </Dialog>
     );

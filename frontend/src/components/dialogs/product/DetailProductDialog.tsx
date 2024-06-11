@@ -3,13 +3,12 @@ import {
     DetailDialogProps,
     DetailDialogContext,
 } from "../../dataDisplay/CursorPaginatedDataGrid.tsx";
-import { ProductDto } from "../../../models/product.ts";
+import { ProductExtendedDto } from "../../../models/product.ts";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
 
 const DetailProductDialog: React.FC = () => {
-    const { isOpen, close, useEntityExtended, targetEntityId }: DetailDialogProps<ProductDto> = useContext(DetailDialogContext);
+    const { isOpen, close, useEntityExtended, targetEntityId }: DetailDialogProps<ProductExtendedDto> = useContext(DetailDialogContext);
     const { data: productExtendedDto, isLoading, error } = useEntityExtended(targetEntityId);
-
 
     return (
         <Dialog open={isOpen} onClose={close} maxWidth="md" fullWidth>
@@ -31,7 +30,13 @@ const DetailProductDialog: React.FC = () => {
                     <Typography variant="body1"><strong>Type:</strong> {productExtendedDto?.type}</Typography>
                 </Box>
                 <Box component="div" mb={3}>
-                    <Typography variant="body1"><strong>Categories:</strong> {productExtendedDto?.categoryIds?.join(", ")}</Typography>
+                    <Typography variant="body1"><strong>Categories: </strong> 
+                        {productExtendedDto?.categories?.map((category, index) => (
+                            <span key={category.id}>
+                                {category.name}{index < productExtendedDto.categories.length - 1 ? ', ' : ''}
+                            </span>
+                        ))}
+                    </Typography>
                 </Box>
             </DialogContent>
             <DialogActions>

@@ -27,7 +27,7 @@ export const VoiceRecordsHistory = (props: { participants: Participants }) => {
     const [currentPage, setCurrentPage] = useState(0);
     const voicesList = useMemo(() => voices?.pages.flatMap(page => page), [voices?.pages]);
     useMemo(() => window.scrollTo(0, document.body.scrollHeight), []);
-    useLayoutEffect(() => window.scrollTo(0, document.body.scrollHeight), []); // TODO fix initial scroll
+    useLayoutEffect(() => window.scrollTo(0, document.body.scrollHeight), []);
     if (isLoading || customerIsLoading) return <div>Loading...</div>;
     if (error || customerError) return <div>Error loading voice records</div>;
     const customerName = customer?.name;

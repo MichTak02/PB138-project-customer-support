@@ -12,7 +12,7 @@ import { useProducts } from '../../../hooks/useProducts';
 const CreateOfferDialog = () => {
     const { isOpen, close, createEntity }: CreateDialogProps<OfferCreateDto> = useContext(CreateDialogContext);
 
-    const { handleSubmit, formState: { errors }, register, control } = useForm<OfferCreateDto>({
+    const { handleSubmit, formState: { errors }, register, control, reset } = useForm<OfferCreateDto>({
         resolver: zodResolver(createOfferSchema),
     });
 
@@ -57,6 +57,16 @@ const CreateOfferDialog = () => {
     }, [loadMoreRef.current, hasNextPage, isFetchingNextPage]);
 
     const sortedProducts = products?.pages.flatMap(page => page).sort((a, b) => a.name.localeCompare(b.name)) || [];
+
+    useEffect(() => {
+        if (!isOpen) {
+            reset({
+                name: '',
+                description: '',
+                offerToProducts: [{ productId: 0, productQuantity: 1, newPrice: 0 }]
+            });
+        }
+    }, [isOpen, reset]);
 
     return (
         <Dialog open={isOpen} onClose={close} maxWidth="md" fullWidth>
@@ -147,7 +157,16 @@ const CreateOfferDialog = () => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleSubmit(onCreateOffer)} color="primary">Create Offer</Button>
-                <Button onClick={close} color="error">Cancel</Button>
+                <Button onClick={() => {
+                    close();
+                    reset({
+                        name: '',
+                        description: '',
+                        offerToProducts: [{ productId: 0, productQuantity: 1, newPrice: 0 }]
+                    });
+                }} color="error">
+                    Cancel
+                </Button>
             </DialogActions>
         </Dialog>
     );

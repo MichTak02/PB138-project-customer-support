@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, FormGroup, Box, FormControl, FormControlLabel, Radio, RadioGroup, FormLabel } from '@mui/material';
 import { UserCreateDto } from "../../../models/user.ts";
 import { useForm, Controller } from 'react-hook-form';
@@ -9,7 +9,7 @@ import { CreateDialogProps, CreateDialogContext } from "../../dataDisplay/Cursor
 const CreateUserDialog = () => {
     const { isOpen, close, createEntity }: CreateDialogProps<UserCreateDto> = useContext(CreateDialogContext);
 
-    const { handleSubmit, formState: { errors }, register, control } = useForm<UserCreateDto>({
+    const { handleSubmit, formState: { errors }, register, control, reset } = useForm<UserCreateDto>({
         resolver: zodResolver(createUserSchema),
     });
 
@@ -17,6 +17,17 @@ const CreateUserDialog = () => {
         await createEntity(data);
         close();
     };
+
+    useEffect(() => {
+        if (!isOpen) {
+            reset({
+                email: '',
+                displayName: '',
+                password: '',
+                role: 'REGULAR'
+            });
+        }
+    }, [isOpen, reset]);
 
     return (
         <Dialog open={isOpen} onClose={close} maxWidth="md" fullWidth>
@@ -72,7 +83,17 @@ const CreateUserDialog = () => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleSubmit(onCreateUser)} color="primary">Create User</Button>
-                <Button onClick={close} color="error">Cancel</Button>
+                <Button onClick={() => {
+                    close();
+                    reset({
+                        email: '',
+                        displayName: '',
+                        password: '',
+                        role: 'REGULAR'
+                    });
+                }} color="error">
+                    Cancel
+                </Button>
             </DialogActions>
         </Dialog>
     );
