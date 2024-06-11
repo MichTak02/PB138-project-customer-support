@@ -1,0 +1,37 @@
+.chat-message {
+    padding: 0.3rem 1rem;
+    text-wrap: normal;
+    margin: 0.4rem;
+    max-width: 80%;
+}
+
+.chat-message--sent {
+    margin-left: auto;
+}
+
+.chat-message--received {
+    margin-right: auto;
+}
+
+.chat-message-text {
+    width: fit-content;
+    border-radius: 15px;
+    padding: 0.3rem 1rem;
+}
+
+.chat-message-text--sent {
+    background-color: var(--blue);
+    color: white;
+    margin-left: auto;
+}
+
+.chat-message-text--received {
+    background-color: lightgray;
+    color: black;
+}
+
+.chat-message-date {
+    margin: 0;
+    color: darkgray;
+    font-size: 0.8rem;
+}

@@ -14,8 +14,6 @@ const CustomerManagement: React.FC = () => {
         { field: 'id', headerName: 'ID', width: 70 },
         { field: 'name', headerName: 'Name', width: 200 },
         { field: 'surname', headerName: 'Surname', width: 200 },
-        { field: 'email', headerName: 'Email', width: 250 },
-        { field: 'phoneNumber', headerName: 'Phone Number', width: 200 },
     ];
 
     return (

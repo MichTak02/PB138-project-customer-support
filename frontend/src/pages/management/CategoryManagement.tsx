@@ -7,7 +7,6 @@ import {
     useCreateCategory, useDeleteCategory, useUpdateCategory
 } from '../../hooks/useCategories.ts';
 import Page from "../../components/base/Page.tsx";
-import { Typography } from "@mui/material";
 import CursorPaginatedDataGrid from "../../components/dataDisplay/CursorPaginatedDataGrid.tsx";
 import { CategoryCreateDto, CategoryDto, CategoryUpdateDto } from "../../models/category.ts";
 import CreateCategoryDialog from "../../components/dialogs/category/CreateCategoryDialog.tsx";

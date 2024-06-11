@@ -7,9 +7,6 @@ const DetailOfferDialog: React.FC = () => {
     const { isOpen, close, useEntityExtended, targetEntityId }: DetailDialogProps<OfferExtendedDto> = useContext(DetailDialogContext);
     const { data: offerExtendedDto, isLoading, error } = useEntityExtended(targetEntityId);
 
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error loading offer data</div>;
-
     return (
         <Dialog open={isOpen} onClose={close} maxWidth="md" fullWidth>
             <DialogTitle>Offer Detail</DialogTitle>

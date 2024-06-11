@@ -70,11 +70,7 @@ const EditOfferDialog: React.FC = () => {
         }
     };
 
-    // Seřaďte produkty podle abecedy
     const sortedProducts = products?.pages.flatMap(page => page).sort((a, b) => a.name.localeCompare(b.name)) || [];
-
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error loading offer data</div>;
 
     return (
         <Dialog open={isOpen} onClose={close} maxWidth="md" fullWidth>
@@ -83,23 +79,29 @@ const EditOfferDialog: React.FC = () => {
                 <Box component={FormGroup} mb={3} sx={{ '& > *': { marginBottom: 2 } }}>
                     <TextField
                         label="Offer name"
+                        InputLabelProps={{ shrink: true }}
+                        variant="outlined"
                         fullWidth
                         {...register("name")}
                         error={!!errors.name}
                         helperText={errors.name?.message}
+                        sx={{ mt: 2 }}
                     />
                     <TextField
                         label="Description"
+                        InputLabelProps={{ shrink: true }}
+                        variant="outlined"
                         fullWidth
                         multiline
                         minRows={3}
                         {...register("description")}
                         error={!!errors.description}
                         helperText={errors.description?.message}
+                        sx={{ mt: 2 }}
                     />
                     {fields.map((item, index) => (
-                        <Box key={item.id} mb={2}>
-                            <FormControl fullWidth error={!!errors.offerToProducts?.[index]?.productId}>
+                        <Box sx={{ mt: 2 }} key={item.id} mb={2}>
+                            <FormControl fullWidth error={!!errors.offerToProducts?.[index]?.productId} sx={{ mt: 2 }}>
                                 <InputLabel>Product</InputLabel>
                                 <Controller
                                     name={`offerToProducts.${index}.productId`}
@@ -126,19 +128,25 @@ const EditOfferDialog: React.FC = () => {
                             </FormControl>
                             <TextField
                                 label="Quantity"
+                                InputLabelProps={{ shrink: true }}
+                                variant="outlined"
                                 fullWidth
                                 type="number"
                                 {...register(`offerToProducts.${index}.productQuantity`, { valueAsNumber: true })}
                                 error={!!errors.offerToProducts?.[index]?.productQuantity}
                                 helperText={errors.offerToProducts?.[index]?.productQuantity?.message}
+                                sx={{ mt: 2 }}
                             />
                             <TextField
                                 label="New Price"
+                                InputLabelProps={{ shrink: true }}
+                                variant="outlined"
                                 fullWidth
                                 type="number"
                                 {...register(`offerToProducts.${index}.newPrice`, { valueAsNumber: true })}
                                 error={!!errors.offerToProducts?.[index]?.newPrice}
                                 helperText={errors.offerToProducts?.[index]?.newPrice?.message}
+                                sx={{ mt: 2 }}
                             />
                             <Button onClick={() => remove(index)} color="error">
                                 Remove Product

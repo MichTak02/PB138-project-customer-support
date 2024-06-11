@@ -76,6 +76,7 @@ const CreateProductDialog = () => {
                         {...register("name")}
                         error={typeof errors.name !== 'undefined'}
                         helperText={errors.name?.message}
+                        sx={{ mt: 2 }}
                     />
                     <TextField
                         label="Description"
@@ -85,6 +86,7 @@ const CreateProductDialog = () => {
                         {...register("description")}
                         error={typeof errors.description !== 'undefined'}
                         helperText={errors.description?.message}
+                        sx={{ mt: 2 }}
                     />
                     <TextField
                         label="Price"
@@ -95,9 +97,10 @@ const CreateProductDialog = () => {
                         {...register("price", { valueAsNumber: true })}
                         error={typeof errors.price !== 'undefined'}
                         helperText={errors.price?.message}
+                        sx={{ mt: 2 }}
                     />
-                    <FormControl component="fieldset" error={typeof errors.type !== 'undefined'}>
-                        <InputLabel component="legend">Type</InputLabel>
+                    <FormControl sx={{ mt: 2 }} component="fieldset" error={typeof errors.type !== 'undefined'}>
+                        <InputLabel sx={{ mb: 2, position: 'relative' }}  component="legend">Type</InputLabel>
                         <FormGroup row>
                             <FormControlLabel
                                 control={
@@ -150,6 +153,21 @@ const CreateProductDialog = () => {
                                             <CircularProgress size={24} />
                                         </MenuItem>
                                     )}
+                                    <MenuItem>
+                                        <Button
+                                            onClick={() => {
+                                                const activeElement = document.activeElement;
+                                                if (activeElement instanceof HTMLElement) {
+                                                    activeElement.blur();
+                                                }
+                                            }}
+                                            fullWidth
+                                            color="primary"
+                                            sx={{ position: 'sticky', bottom: 0 }}
+                                        >
+                                            OK
+                                        </Button>
+                                    </MenuItem>
                                 </Select>
                             )}
                         />

@@ -30,9 +30,6 @@ const EditUserDialog: React.FC = () => {
         close();
     };
 
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error loading user data</div>;
-
     return (
         <Dialog open={isOpen} onClose={close} maxWidth="md" fullWidth>
             <DialogTitle>Edit User</DialogTitle>
@@ -40,12 +37,15 @@ const EditUserDialog: React.FC = () => {
                 <Box component={FormGroup} mb={3} sx={{ '& > *': { marginBottom: 2 } }}>
                     <TextField
                         label="Display Name"
+                        InputLabelProps={{ shrink: true }}
+                        variant="outlined"
                         fullWidth
                         {...register("displayName")}
                         error={!!errors.displayName}
                         helperText={errors.displayName?.message}
+                        sx={{ mt: 2 }}
                     />
-                    <FormControl component="fieldset">
+                    <FormControl sx={{ mt: 2 }} component="fieldset">
                         <FormLabel component="legend">Role</FormLabel>
                         <Controller
                             name="role"

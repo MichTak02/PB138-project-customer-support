@@ -25,27 +25,36 @@ const CreateUserDialog = () => {
                 <Box component={FormGroup} mb={3} sx={{ '& > *': { marginBottom: 2 } }}>
                     <TextField
                         label="Email"
+                        InputLabelProps={{ shrink: true }}
+                        variant="outlined"
                         fullWidth
                         {...register("email")}
                         error={!!errors.email}
                         helperText={errors.email?.message}
+                        sx={{ mt: 2 }}
                     />
                     <TextField
                         label="Display Name"
+                        InputLabelProps={{ shrink: true }}
+                        variant="outlined"
                         fullWidth
                         {...register("displayName")}
                         error={!!errors.displayName}
                         helperText={errors.displayName?.message}
+                        sx={{ mt: 2 }}
                     />
                     <TextField
                         label="Password"
                         type="password"
+                        InputLabelProps={{ shrink: true }}
+                        variant="outlined"
                         fullWidth
                         {...register("password")}
                         error={!!errors.password}
                         helperText={errors.password?.message}
+                        sx={{ mt: 2 }}
                     />
-                    <FormControl component="fieldset">
+                    <FormControl sx={{ mt: 2 }} component="fieldset">
                         <FormLabel component="legend">Role</FormLabel>
                         <Controller
                             name="role"
