@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
     EditDialogProps,
     EditDialogContext,
@@ -7,7 +7,7 @@ import { ProductDto, ProductUpdateDto } from "../../../models/product.ts";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { editProductSchema } from "../../../validationSchemas/forms.ts";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormGroup, TextField, FormControl, InputLabel, Checkbox, FormControlLabel, ListItemText, CircularProgress, Select, MenuItem} from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormGroup, TextField, FormControl, InputLabel, Checkbox, FormControlLabel, ListItemText, CircularProgress, Select, MenuItem, Typography } from "@mui/material";
 import { useCategories } from "../../../hooks/useCategories";
 
 const EditProductDialog: React.FC = () => {
@@ -25,6 +25,7 @@ const EditProductDialog: React.FC = () => {
     } = useCategories();
 
     const loadMoreRef = useRef<HTMLDivElement | null>(null);
+    const [selectOpen, setSelectOpen] = useState(false);
 
     useEffect(() => {
         if (product) {
@@ -32,7 +33,7 @@ const EditProductDialog: React.FC = () => {
             setValue("description", product.description);
             setValue("price", product.price);
             setValue("type", product.type);
-            setValue("categoryIds", product.categoryIds);
+            setValue("categoryIds", product.categoryIds || []);
         }
     }, [product, setValue]);
 
@@ -137,39 +138,69 @@ const EditProductDialog: React.FC = () => {
                             control={control}
                             name="categoryIds"
                             render={({ field }) => (
-                                <Select
-                                    labelId="category-label"
-                                    multiple
-                                    {...field}
-                                    value={field.value ?? []}
-                                    renderValue={(selected) => {
-                                        const selectedCategories = sortedCategories.filter(category => selected.includes(category.id));
-                                        return selectedCategories.map(category => category.name).join(', ') || '';
-                                    }}
-                                    MenuProps={{ onScroll: handleCategoryScroll }}
-                                >
-                                    {sortedCategories.map((category) => (
-                                        <MenuItem key={category.id} value={category.id}>
-                                            <Checkbox checked={field.value ? field.value.includes(category.id) : false} />
-                                            <ListItemText primary={category.name} />
-                                        </MenuItem>
-                                    ))}
-                                    {isFetchingNextPage && (
-                                        <MenuItem disabled>
-                                            <CircularProgress size={24} />
-                                        </MenuItem>
-                                    )}
-                                </Select>
+                                <>
+                                    <Select
+                                        labelId="category-label"
+                                        multiple
+                                        {...field}
+                                        open={selectOpen}
+                                        onOpen={() => setSelectOpen(true)}
+                                        onClose={() => setSelectOpen(false)}
+                                        value={field.value ?? []}
+                                        renderValue={(selected) => {
+                                            const selectedCategories = sortedCategories.filter(category => selected.includes(category.id));
+                                            return selectedCategories.map(category => category.name).join(', ') || '';
+                                        }}
+                                        MenuProps={{ onScroll: handleCategoryScroll }}
+                                    >
+                                        {sortedCategories.map((category) => (
+                                            <MenuItem key={category.id} value={category.id}>
+                                                <Checkbox checked={field.value ? field.value.includes(category.id) : false} />
+                                                <ListItemText primary={category.name} />
+                                            </MenuItem>
+                                        ))}
+                                        {isFetchingNextPage && (
+                                            <MenuItem disabled>
+                                                <CircularProgress size={24} />
+                                            </MenuItem>
+                                        )}
+                                        <Button
+                                            onClick={() => setSelectOpen(false)}
+                                            fullWidth
+                                            color="primary"
+                                            sx={{
+                                                position: 'sticky',
+                                                bottom: 0,
+                                                bgcolor: 'white',
+                                                '&:hover': {
+                                                    bgcolor: 'white',
+                                                    boxShadow: 'none',
+                                                },
+                                            }}
+                                        >
+                                            OK
+                                        </Button>
+                                    </Select>
+                                </>
                             )}
                         />
                         {errors.categoryIds && <p>{errors.categoryIds.message}</p>}
                     </FormControl>
+                    {product?.categoryIds && (
+                        <FormGroup row>
+                            <Typography variant="body1"><strong>Selected Categories: </strong>
+                                {sortedCategories.filter(category => product.categoryIds.includes(category.id)).map(category => category.name).join(', ')}
+                            </Typography>
+                        </FormGroup>
+                    )}
                 </Box>
                 <div ref={loadMoreRef} />
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleSubmit(onUpdateProduct)} color="primary">Update product</Button>
-                <Button onClick={close} color="error">Cancel</Button>
+                <Button onClick={close} color="error">
+                    Cancel
+                </Button>
             </DialogActions>
         </Dialog>
     );

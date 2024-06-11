@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
     Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, FormGroup, Box, Select, MenuItem, InputLabel, FormControl, Checkbox, ListItemText, FormControlLabel, CircularProgress
 } from '@mui/material';
@@ -12,7 +12,7 @@ import { useCategories } from '../../../hooks/useCategories';
 const CreateProductDialog = () => {
     const { isOpen, close, createEntity }: CreateDialogProps<ProductCreateDto> = useContext(CreateDialogContext);
 
-    const { handleSubmit, formState: { errors }, register, control, setValue, watch } = useForm<ProductCreateDto>({
+    const { handleSubmit, formState: { errors }, register, control, setValue, watch, reset } = useForm<ProductCreateDto>({
         resolver: zodResolver(createProductSchema),
         defaultValues: {
             name: '',
@@ -33,6 +33,7 @@ const CreateProductDialog = () => {
     const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
     const selectedType = watch('type');
+    const [selectOpen, setSelectOpen] = useState(false);
 
     const handleTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue('type', event.target.value);
@@ -60,6 +61,18 @@ const CreateProductDialog = () => {
             return () => observer.disconnect();
         }
     }, [loadMoreRef.current, hasNextPage, isFetchingNextPage]);
+
+    useEffect(() => {
+        if (!isOpen) {
+            reset({
+                name: '',
+                description: '',
+                price: 0,
+                type: 'PRODUCT',
+                categoryIds: []
+            });
+        }
+    }, [isOpen, reset]);
 
     const sortedCategories = categories?.pages.flatMap(page => page).sort((a, b) => a.name.localeCompare(b.name)) || [];
 
@@ -100,7 +113,7 @@ const CreateProductDialog = () => {
                         sx={{ mt: 2 }}
                     />
                     <FormControl sx={{ mt: 2 }} component="fieldset" error={typeof errors.type !== 'undefined'}>
-                        <InputLabel sx={{ mb: 2, position: 'relative' }}  component="legend">Type</InputLabel>
+                        <InputLabel sx={{ mb: 2, position: 'relative' }} component="legend">Type</InputLabel>
                         <FormGroup row>
                             <FormControlLabel
                                 control={
@@ -131,44 +144,50 @@ const CreateProductDialog = () => {
                             control={control}
                             name="categoryIds"
                             render={({ field }) => (
-                                <Select
-                                    labelId="category-label"
-                                    multiple
-                                    {...field}
-                                    value={field.value ?? []}
-                                    renderValue={(selected) => {
-                                        const selectedCategories = sortedCategories.filter(category => selected.includes(category.id));
-                                        return selectedCategories.map(category => category.name).join(', ') || '';
-                                    }}
-                                    MenuProps={{ onScroll: handleCategoryScroll }}
-                                >
-                                    {sortedCategories.map((category) => (
-                                        <MenuItem key={category.id} value={category.id}>
-                                            <Checkbox checked={field.value.includes(category.id)} />
-                                            <ListItemText primary={category.name} />
-                                        </MenuItem>
-                                    ))}
-                                    {isFetchingNextPage && (
-                                        <MenuItem disabled>
-                                            <CircularProgress size={24} />
-                                        </MenuItem>
-                                    )}
-                                    <MenuItem>
+                                <>
+                                    <Select
+                                        labelId="category-label"
+                                        multiple
+                                        {...field}
+                                        open={selectOpen}
+                                        onOpen={() => setSelectOpen(true)}
+                                        onClose={() => setSelectOpen(false)}
+                                        value={field.value ?? []}
+                                        renderValue={(selected) => {
+                                            const selectedCategories = sortedCategories.filter(category => selected.includes(category.id));
+                                            return selectedCategories.map(category => category.name).join(', ') || '';
+                                        }}
+                                        MenuProps={{ onScroll: handleCategoryScroll }}
+                                    >
+                                        {sortedCategories.map((category) => (
+                                            <MenuItem key={category.id} value={category.id}>
+                                                <Checkbox checked={field.value.includes(category.id)} />
+                                                <ListItemText primary={category.name} />
+                                            </MenuItem>
+                                        ))}
+                                        {isFetchingNextPage && (
+                                            <MenuItem disabled>
+                                                <CircularProgress size={24} />
+                                            </MenuItem>
+                                        )}
                                         <Button
-                                            onClick={() => {
-                                                const activeElement = document.activeElement;
-                                                if (activeElement instanceof HTMLElement) {
-                                                    activeElement.blur();
-                                                }
-                                            }}
+                                            onClick={() => setSelectOpen(false)}
                                             fullWidth
                                             color="primary"
-                                            sx={{ position: 'sticky', bottom: 0 }}
+                                            sx={{
+                                                position: 'sticky',
+                                                bottom: 0,
+                                                bgcolor: 'white',
+                                                '&:hover': {
+                                                    bgcolor: 'white',
+                                                    boxShadow: 'none',
+                                                },
+                                            }}
                                         >
                                             OK
                                         </Button>
-                                    </MenuItem>
-                                </Select>
+                                    </Select>
+                                </>
                             )}
                         />
                         {errors.categoryIds && <p>{errors.categoryIds.message}</p>}
@@ -178,7 +197,16 @@ const CreateProductDialog = () => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleSubmit(onCreateProduct)}>Create product</Button>
-                <Button onClick={close} color="error">
+                <Button onClick={() => {
+                    close();
+                    reset({
+                        name: '',
+                        description: '',
+                        price: 0,
+                        type: 'PRODUCT',
+                        categoryIds: []
+                    });
+                }} color="error">
                     Cancel
                 </Button>
             </DialogActions>

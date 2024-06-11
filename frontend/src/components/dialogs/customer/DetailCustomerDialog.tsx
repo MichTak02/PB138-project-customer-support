@@ -1,11 +1,25 @@
 import React, { useContext } from "react";
+import { useNavigate } from 'react-router-dom';
 import { DetailDialogProps, DetailDialogContext } from "../../dataDisplay/CursorPaginatedDataGrid.tsx";
 import { CustomerExtendedDto } from "../../../models/customer.ts";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
+import useAuth from "../../../hooks/useAuth";
 
 const DetailCustomerDialog: React.FC = () => {
+    const navigate = useNavigate();
     const { isOpen, close, useEntityExtended, targetEntityId }: DetailDialogProps<CustomerExtendedDto> = useContext(DetailDialogContext);
     const { data: customerExtendedDto, isLoading, error } = useEntityExtended(targetEntityId);
+
+    const { auth } = useAuth();
+    const userId = auth?.id;
+
+    const handleViewVoiceRecords = () => {
+        if (userId && targetEntityId) {
+            navigate(`/auth/customers/records/${userId}/${targetEntityId}`);
+        } else {
+            alert('User ID or Customer ID is missing.');
+        }
+    };
 
     return (
         <Dialog open={isOpen} onClose={close} maxWidth="md" fullWidth>
@@ -43,6 +57,7 @@ const DetailCustomerDialog: React.FC = () => {
             </DialogContent>
             <DialogActions>
                 <Button color="primary" onClick={close}>Close</Button>
+                <Button color="secondary" onClick={handleViewVoiceRecords}>View Voice Records</Button>
             </DialogActions>
         </Dialog>
     );
