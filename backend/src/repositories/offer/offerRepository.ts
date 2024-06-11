@@ -5,6 +5,7 @@ import {OfferCreateDto, OfferDto, OfferExtendedDto, OfferFilter, OfferUpdateDto}
 import {offerModelToOfferDto, offerModelToOfferExtendedDto} from "./mappers";
 import {handleRepositoryErrors, READ_MANY_TAKE} from "../../utils/repositoryUtils";
 import {Prisma} from "@prisma/client";
+import { object } from "zod";
 
 const offerRepository = {
     async create(data: OfferCreateDto): DbResult<OfferDto> {
@@ -112,13 +113,39 @@ const offerRepository = {
 
     async update(id: number, data: OfferUpdateDto): DbResult<OfferDto> {
         try {
-            const offer = await prisma.offer.update({
-                where: {
-                    id: id
+            const transactionResult = await prisma.$transaction(
+                async (transaction) => {
+                    const {offerToProducts, ...offerData} = data;
+                    await transaction.offerToProduct.deleteMany({
+                        where: {
+                            offerId: id,
+                        },
+                    });
+                    const offer = await transaction.offer.update({
+                        where: {
+                            id: id,
+                        },
+                        data: offerData,
+                        include: {
+                            offerToProducts: true,
+                        },
+                    });
+                    
+                    if (offerToProducts) {
+                        for (const offerToProduct of offerToProducts) {
+                            const otp = await transaction.offerToProduct.create({
+                                data: {offerId: id, ...offerToProduct},
+                            });
+                            offer.offerToProducts.push(otp);
+                        }
+                    }
+                    return offer;
                 },
-                data: data,
-            });
-            return Result.ok(offerModelToOfferDto(offer));
+                {
+                    timeout: 100000,
+                }
+            )
+            return Result.ok(offerModelToOfferDto(transactionResult));
         } catch (error) {
             return handleRepositoryErrors(error);
         }

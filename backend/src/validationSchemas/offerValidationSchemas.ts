@@ -36,6 +36,11 @@ export const updateOfferSchema = z.object({
   body: z.object({
     name: z.string().min(1).max(255).optional(),
     description: z.string().min(1).max(1020).optional(),
+    offerToProducts: z.array(z.object({
+      productId: z.coerce.number(),
+      productQuantity: z.coerce.number(),
+      newPrice: z.coerce.number(),
+  })).optional(),
   }),
 });
 
